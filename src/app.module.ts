@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -14,9 +15,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
         username: config.get<string>('DATABASE_USERNAME', 'root'),
         password: config.get<string>('DATABASE_PASSWORD', ''),
         database: config.get<string>('DATABASE_DB', 'zuda'),
-        models: []
+
+        autoLoadModels: true,
+        logging: false
       })
-    })
+    }),
+    UserModule
   ]
 })
 export class AppModule {}
