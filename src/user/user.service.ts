@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -47,6 +48,18 @@ export class UserService {
       throw new NotFoundException(UserError.USER_NOT_FOUND);
     }
 
+    return result;
+  }
+
+  async update(uuid: string, updateUserDTO: UpdateUserDTO): Promise<User> {
+    const result = await this.findOneByUUID(uuid);
+    await result.update(updateUserDTO);
+    return result;
+  }
+
+  async delete(uuid: string): Promise<User> {
+    const result = await this.findOneByUUID(uuid);
+    await result.destroy();
     return result;
   }
 }
