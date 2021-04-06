@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -13,6 +14,10 @@ async function bootstrap() {
     origin: corsHost
   });
   app.useGlobalPipes(new ValidationPipe());
+
+  const documentConfig = new DocumentBuilder().setTitle('ZUDA API Document').build();
+  const document = SwaggerModule.createDocument(app, documentConfig);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(8080);
 }
