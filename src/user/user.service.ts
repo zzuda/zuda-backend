@@ -51,8 +51,8 @@ export class UserService {
     return result;
   }
 
-  async update(uuid: string, updateUserDTO: UpdateUserDTO): Promise<User> {
-    const result = await this.findOneByUUID(uuid);
+  async update(updateUserDTO: UpdateUserDTO): Promise<User> {
+    const result = await this.findOneByUUID(updateUserDTO.uuid);
     await result.update(updateUserDTO);
     return result;
   }
