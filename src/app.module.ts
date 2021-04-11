@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -19,6 +20,10 @@ import { UserModule } from './user/user.module';
         autoLoadModels: true,
         logging: false
       })
+    }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 1000
     }),
     UserModule
   ]
