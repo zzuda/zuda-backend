@@ -12,9 +12,9 @@ import { UserModule } from './user/user.module';
       useFactory: (config: ConfigService) => ({
         dialect: 'mysql',
         host: config.get<string>('DATABASE_HOST', 'localhost'),
-        port: config.get<number>('DATABASE_PORT', 3306),
+        port: config.get<number>('DATABASE_PORT', 3305),
         username: config.get<string>('DATABASE_USERNAME', 'root'),
-        password: config.get<string>('DATABASE_PASSWORD', ''),
+        password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
 
         autoLoadModels: true,
