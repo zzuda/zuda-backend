@@ -14,7 +14,7 @@ export class UserController {
   }
 
   @Put() //Put 데코레이터 : 유저 정보를 수정할때 쓰는 듯함
-  async update(@Body() updateUserDTO: UpdateUserDTO): Promise<User> { //async (비동기 작업)으로  Put에 Body로 DTO가 들어옴 (DTO는 body 정보로써 uuid, name, password가 들어옴)
+  async update(@Body() updateUserDTO: UpdateUserDTO): Promise<User> { //async (비동기 작업)으로  Put에 Body로 DTO가 들어옴 (DTO는 body 정보로써 uuid, name, password가 들어옴) 아니면 이상한 정보가 들어오면 Validation Pipe가 거를듯?
     const result = await this.userService.update(updateUserDTO);    //반환되는 result는 userService를 호출하여 그곳에서 작업을 해주어 보내줌 (예정)
     return result;                                                  // 결과값을 리턴 (여기서 여러가지 오류같은 것도 userService에서 같이 return 할듯)
   }
