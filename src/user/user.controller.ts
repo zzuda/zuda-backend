@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User } from './user.model';
 import { UserService } from './user.service';
@@ -10,6 +10,12 @@ export class UserController {
   @Get()
   async findAll(): Promise<User[]> {
     const result = await this.userService.findAll();
+    return result;
+  }
+
+  @Get()
+  async findOne(@Param('uuid') uuid: string): Promise<User> {
+    const result = await this.userService.findOneByUUID(uuid);
     return result;
   }
 
