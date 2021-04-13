@@ -4,6 +4,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { UserModule } from './user/user.module';
 
+// import { AuthModule } from './auth/auth.module';
+// import { UsersModule } from './users/users.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -25,7 +28,9 @@ import { UserModule } from './user/user.module';
       ttl: 60,
       limit: 1000
     }),
-    UserModule
+    UserModule,
+    // AuthModule,
+    // UsersModule
   ]
 })
 export class AppModule {}
