@@ -10,6 +10,7 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 export class UserService {
   constructor(@InjectModel(User) private readonly userModel: typeof User) {}
 
+  //POST 를 이용하여 uuid 생성
   async create(createUserDTO: CreateUserDTO): Promise<User> {
     const result = this.userModel.create({
       uuid: uuidv4(),
