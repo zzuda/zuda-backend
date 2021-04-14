@@ -1,17 +1,18 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';  //Entry 포인트 역할을 하는 Controller와 Get/Put 을 사용하기 위해 import 시켜줌
-import { UpdateUserDTO } from './dto/update-user.dto';        // 업데이트 할 종류와 정보가 담긴 UserDTO 파일을 dto/update-user.dto으로 부터 가져옴
-import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';        // 업데이트 할 종류와 정보가 담긴 UpdateUserDTO 클래스를 dto/update-user.dto으로 부터 가져옴
+import { CreateUserDTO } from './dto/create-user.dto';        // 생성할 종류와 정보가 담긴 CreateUserDTO  클래스를 dto/create-uesr.dto으로 부터 가져옴
+
 import { User } from './user.model';                          // 'zuda' 데이터 베이스에 'users' 테이블에 담긴 필요한 key값들을 가져옴
 import { UserService } from './user.service';                 // Controller로 라우팅 되는 정보들을 처리하는 UserService 부분을 import 시켜주었음
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  
+
 //POST 를 이용하여 uuid 생성
   @Post()
-  async create(@Body() createUserDTO: CreateUserDTO){
-    const result = await this.userService.create(createUserDTO);
+  async create(@Body() createUserDTO: CreateUserDTO){ //Body로 createUserDto변수는, 임포트한 CreateUserDto 규칙에 따라 userSerice에 create 함수로 createUserDto변수값을 전송 
+    const result = await this.userService.create(createUserDTO);  //userSerive에 create 함수로 createUserDto변수를 전송하여 나온 결과값을 return (리턴) 
     return result;
   }
 
