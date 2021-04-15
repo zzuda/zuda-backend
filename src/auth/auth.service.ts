@@ -35,9 +35,8 @@ export class AuthService{
     };
 
     async refreshToken(UUID : string){
-        const payload = { UUID };
-
-        const refresh_token = this.jwtService.sign(payload, {
+        
+        const refresh_token = this.jwtService.sign(UUID, {
             secret: this.configService.get('JWT_REFRESH_KEY', 'Default'), //get이 NULL 되면 안되서 두번쨰 인자로 기본값을 아무거나 넣어주었다
             expiresIn: `${this.configService.get(
               'JWT_REFRESH_EXPIRE_TIME',
