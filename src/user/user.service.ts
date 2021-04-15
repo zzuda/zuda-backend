@@ -6,6 +6,8 @@ import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
 
+
+
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User) private readonly userModel: typeof User) {}
