@@ -25,7 +25,7 @@ export class AuthService{
         };
     };
 
-    async validateToken(access_token: any, isValid: boolean){
+    async validateToken(access_token: any, isValid: boolean){ //isVaild will return as boolean
        return{
         isValid: this.jwtService.verify(access_token)
        }
