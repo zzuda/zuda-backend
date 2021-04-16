@@ -2,11 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { UserModule } from './user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
-
-// import { AuthModule } from './auth/auth.module';
-// import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -31,7 +28,7 @@ import { AuthModule } from 'src/auth/auth.module';
     }),
     UserModule,
     AuthModule,
-    // UsersModule
+    
   ]
 })
 export class AppModule {}
