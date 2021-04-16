@@ -1,6 +1,4 @@
 # zuda-backend
-# THIS BRANCH IS NOT FOR PULL REQUEST
-# SAKE OF STUDYING REASON, THIS IS TEMPORARY BRANCH 
 
 > 너에게 주다. 과제제출, 출석체크 등 학습 보조 플랫폼
 
