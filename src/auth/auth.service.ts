@@ -1,14 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IToken } from 'src/types';
-import { AuthError } from '../shared/errors/auth.error';
+import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
+import { RefreshTokenReturn, TokenReturn } from 'src/types';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService, private configService: ConfigService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly userService: UserService
+  ) {}
 
-  generateToken(uuid: string): IToken {
+  generateToken(uuid: string): TokenReturn {
     const token = this.jwtService.sign(
       {
         uuid
@@ -26,12 +31,28 @@ export class AuthService {
   validateToken(token: string): boolean {
     const valid = this.jwtService.verify(token, this.configService.get('JWT_SECRET_KEY'));
     if (!valid) {
-      throw new NotFoundException(AuthError.INVALID_TOKEN);
+      return false;
     }
     return true;
   }
 
-  refreshToken(uuid: string): IToken {
+  async validateLocalLogin(email: string, password: string): Promise<boolean> {
+    const isExists = await this.userService.existsUserByEmail(email);
+
+    if (!isExists) return false;
+
+    const { password: userPassword } = await this.userService.findOneByEmail(email);
+
+    if (!userPassword) return false;
+
+    const compared = await bcrypt.compare(password, userPassword);
+
+    if (!compared) return false;
+
+    return true;
+  }
+
+  refreshToken(uuid: string): RefreshTokenReturn {
     const refreshToken = this.jwtService.sign(
       {
         uuid

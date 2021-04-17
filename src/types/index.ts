@@ -4,9 +4,10 @@ interface ErrorDetail {
 }
 export type ErrorInfo = Record<string, ErrorDetail>;
 
-export interface IToken {
-  uuid?: string;
-  TOKEN?: string;
-  REFRESH_TOKEN?: string;
-  verify?: string;
+export interface TokenReturn {
+  TOKEN: string;
+}
+
+export interface RefreshTokenReturn {
+  REFRESH_TOKEN: string;
 }
