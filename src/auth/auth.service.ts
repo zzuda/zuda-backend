@@ -9,10 +9,15 @@ export class AuthService {
   constructor(private jwtService: JwtService, private configService: ConfigService) {}
 
   generateToken(uuid: string): IToken {
-    const token = this.jwtService.sign(uuid, {
-      secret: this.configService.get('JWT_SECRET_KEY', 'Default'),
-      expiresIn: `${this.configService.get('JWT_SECRET_EXPIRE_TIME', 'Default')}s`
-    });
+    const token = this.jwtService.sign(
+      {
+        uuid
+      },
+      {
+        secret: this.configService.get('JWT_SECRET_KEY', 'Default'),
+        expiresIn: `${this.configService.get('JWT_SECRET_EXPIRE_TIME', 'Default')}s`
+      }
+    );
     return {
       TOKEN: token
     };
@@ -27,10 +32,15 @@ export class AuthService {
   }
 
   refreshToken(uuid: string): IToken {
-    const refreshToken = this.jwtService.sign(uuid, {
-      secret: this.configService.get('JWT_REFRESH_KEY', 'Default'),
-      expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRE_TIME', 'Default')}s`
-    });
+    const refreshToken = this.jwtService.sign(
+      {
+        uuid
+      },
+      {
+        secret: this.configService.get('JWT_REFRESH_KEY', 'Default'),
+        expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRE_TIME', 'Default')}s`
+      }
+    );
 
     return {
       REFRESH_TOKEN: refreshToken
