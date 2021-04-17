@@ -8,7 +8,7 @@ import { AuthError } from '../shared/errors/auth.error';
 export class AuthService {
   constructor(private jwtService: JwtService, private configService: ConfigService) {}
 
-  async generateToken(uuid: string): Promise<IToken> {
+  generateToken(uuid: string): IToken {
     const token = this.jwtService.sign(uuid, {
       secret: this.configService.get('JWT_SECRET_KEY', 'Default'),
       expiresIn: `${this.configService.get('JWT_SECRET_EXPIRE_TIME', 'Default')}s`
@@ -18,7 +18,7 @@ export class AuthService {
     };
   }
 
-  async validateToken(token: string): Promise<boolean> {
+  validateToken(token: string): boolean {
     const valid = this.jwtService.verify(token, this.configService.get('JWT_SECRET_KEY'));
     if (!valid) {
       throw new NotFoundException(AuthError.INVALID_TOKEN);
@@ -26,7 +26,7 @@ export class AuthService {
     return true;
   }
 
-  async refreshToken(uuid: string): Promise<IToken> {
+  refreshToken(uuid: string): IToken {
     const refreshToken = this.jwtService.sign(uuid, {
       secret: this.configService.get('JWT_REFRESH_KEY', 'Default'),
       expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRE_TIME', 'Default')}s`
