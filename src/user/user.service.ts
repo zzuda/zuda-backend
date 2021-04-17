@@ -8,8 +8,6 @@ import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
 
-
-
 @Injectable()
 export class UserService {
   constructor(
@@ -17,10 +15,9 @@ export class UserService {
     private readonly config: ConfigService
   ) {}
 
-  
   async create(createUserDTO: CreateUserDTO): Promise<User> {
     const { email, password } = createUserDTO;
-    const exists = await this.existsUser(email);
+    const exists = await this.existsUserByEmail(email);
 
     if (exists) throw new ConflictException(UserError.USER_ALREADY_EXISTS);
 
@@ -38,9 +35,24 @@ export class UserService {
     return result;
   }
 
-  async existsUser(email: string): Promise<boolean> {
+  async existsUserByEmail(email: string): Promise<boolean> {
     try {
       const exists = await this.findOneByEmail(email);
+      if (exists) {
+        return true;
+      }
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  async existsUserByUUID(uuid: string): Promise<boolean> {
+    try {
+      const exists = await this.findOneByUUID(uuid);
       if (exists) {
         return true;
       }
