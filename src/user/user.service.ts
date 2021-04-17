@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
@@ -21,15 +21,16 @@ export class UserService {
 
     if (exists) throw new ConflictException(UserError.USER_ALREADY_EXISTS);
 
+    const hashRound = parseInt(this.config.get('SALT_ROUND', '12'), 10);
     let hashed: string | undefined;
     if (password) {
-      hashed = await bcrypt.hash(password, this.config.get<number>('SALT_ROUND', 12));
+      hashed = await bcrypt.hash(password, hashRound);
     }
 
-    const result = this.userModel.create({
+    const result = await this.userModel.create({
+      ...createUserDTO,
       uuid: uuidv4(),
-      password: hashed,
-      ...createUserDTO
+      password: hashed
     });
 
     return result;
@@ -66,7 +67,7 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    const result = this.userModel.findAll();
+    const result = await this.userModel.findAll();
     return result;
   }
 
