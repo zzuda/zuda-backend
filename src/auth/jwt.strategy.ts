@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthError } from 'src/shared/errors/auth.error';
-import { IToken } from 'src/types';
 import { User } from 'src/user/user.model';
 import { UserService } from 'src/user/user.service';
 
@@ -19,12 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IToken): Promise<User | undefined> {
+  async validate(payload: { uuid: string }): Promise<User | undefined> {
     try {
       const { uuid } = payload;
-
       const user = await this.userService.findOneByUUID(uuid || '');
-
       return user;
     } catch (e) {
       if (e instanceof NotFoundException) {

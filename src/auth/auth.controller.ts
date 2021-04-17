@@ -1,7 +1,36 @@
-import { Body, Controller } from '@nestjs/common';
+import { Body, Controller, NotFoundException, Post } from '@nestjs/common';
+import { AuthError } from 'src/shared/errors/auth.error';
+import { User } from 'src/user/user.model';
+import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
+import { LocalLoginDTO } from './dto/local-login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService
+  ) {}
+
+  @Post()
+  async localLogin(
+    @Body() loginDTO: LocalLoginDTO
+  ): Promise<{
+    user: User;
+    token: string;
+    refreshToken: string;
+  }> {
+    const { email, password } = loginDTO;
+    const validation = await this.authService.validateLocalLogin(email, password);
+
+    if (!validation) throw new NotFoundException(AuthError.EMAIL_OR_PASSWORD_ERROR);
+
+    const user = await this.userService.findOneByEmail(email);
+
+    return {
+      user,
+      token: this.authService.generateToken(user.uuid).TOKEN,
+      refreshToken: this.authService.refreshToken(user.uuid).REFRESH_TOKEN
+    };
+  }
 }

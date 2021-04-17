@@ -8,5 +8,9 @@ export const AuthError: ErrorInfo = {
   PERMISSION: {
     code: 'auth-401-1',
     message: '권한이 없습니다.'
+  },
+  EMAIL_OR_PASSWORD_ERROR: {
+    code: 'auth-404',
+    message: '없는 계정이거나 비밀번호가 올바르지 않습니다.'
   }
 };
