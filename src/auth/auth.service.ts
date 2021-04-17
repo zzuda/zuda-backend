@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { IToken } from 'src/auth/auth.model';
+import { IToken } from 'src/types';
 import { AuthError } from '../shared/errors/auth.error';
 
 @Injectable()
@@ -18,12 +18,12 @@ export class AuthService {
     };
   }
 
-  async validateToken(token: string): Promise<string> {
+  async validateToken(token: string): Promise<boolean> {
     const valid = this.jwtService.verify(token, this.configService.get('JWT_SECRET_KEY'));
     if (!valid) {
       throw new NotFoundException(AuthError.INVALID_TOKEN);
     }
-    return 'true';
+    return true;
   }
 
   async refreshToken(uuid: string): Promise<IToken> {

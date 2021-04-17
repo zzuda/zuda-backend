@@ -2,16 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import cookieParser from 'cookie-parser';                 
-import helmet from 'helmet';                                
-import { AppModule } from './app.module';                    
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import csurf from 'csurf';
+import { AppModule } from './app.module';
 import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
 
-async function bootstrap() {                               
-  const app = await NestFactory.create(AppModule);      
-  const config = app.get<ConfigService>('ConfigService');  
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const config = app.get<ConfigService>('ConfigService');
 
-  const corsHost = config.get<string>('CORS_HOST', 'http://localhost:3000');   
+  const corsHost = config.get<string>('CORS_HOST', 'http://localhost:3000');
 
   app.enableCors({
     origin: corsHost
