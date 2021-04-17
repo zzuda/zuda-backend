@@ -1,8 +1,8 @@
-import { ValidationPipe } from '@nestjs/common';  
-import { ConfigService } from '@nestjs/config';     
-import { NestFactory } from '@nestjs/core';        
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'; 
-// import csurf from 'csurf';                                
+import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';                 
 import helmet from 'helmet';                                
 import { AppModule } from './app.module';                    
 import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
@@ -16,8 +16,9 @@ async function bootstrap() {
   app.enableCors({
     origin: corsHost
   });
+  app.use(cookieParser());
   app.use(helmet());
-  // app.use(csurf());
+  app.use(csurf());
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ResponseInterceptor());
 

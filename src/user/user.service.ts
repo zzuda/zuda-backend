@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateUserDTO } from './dto/create-user.dto';
+import bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
+import { CreateUserDTO } from '../shared/dto/create-user.dto';
 import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
@@ -10,15 +12,45 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User) private readonly userModel: typeof User) {}
+  constructor(
+    @InjectModel(User) private readonly userModel: typeof User,
+    private readonly config: ConfigService
+  ) {}
 
   
   async create(createUserDTO: CreateUserDTO): Promise<User> {
+    const { email, password } = createUserDTO;
+    const exists = await this.existsUser(email);
+
+    if (exists) throw new ConflictException(UserError.USER_ALREADY_EXISTS);
+
+    let hashed: string | undefined;
+    if (password) {
+      hashed = await bcrypt.hash(password, this.config.get<number>('SALT_ROUND', 12));
+    }
+
     const result = this.userModel.create({
       uuid: uuidv4(),
+      password: hashed,
       ...createUserDTO
     });
+
     return result;
+  }
+
+  async existsUser(email: string): Promise<boolean> {
+    try {
+      const exists = await this.findOneByEmail(email);
+      if (exists) {
+        return true;
+      }
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        return false;
+      }
+    }
+
+    return false;
   }
 
   async findAll(): Promise<User[]> {
