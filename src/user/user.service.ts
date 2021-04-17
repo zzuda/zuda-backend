@@ -6,10 +6,13 @@ import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
 
+
+
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User) private readonly userModel: typeof User) {}
 
+  
   async create(createUserDTO: CreateUserDTO): Promise<User> {
     const result = this.userModel.create({
       uuid: uuidv4(),

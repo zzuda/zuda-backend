@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from 'src/auth/auth.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -12,9 +13,9 @@ import { UserModule } from './user/user.module';
       useFactory: (config: ConfigService) => ({
         dialect: 'mysql',
         host: config.get<string>('DATABASE_HOST', 'localhost'),
-        port: config.get<number>('DATABASE_PORT', 3306),
+        port: config.get<number>('DATABASE_PORT', 3305),
         username: config.get<string>('DATABASE_USERNAME', 'root'),
-        password: config.get<string>('DATABASE_PASSWORD', ''),
+        password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
 
         autoLoadModels: true,
@@ -25,7 +26,9 @@ import { UserModule } from './user/user.module';
       ttl: 60,
       limit: 1000
     }),
-    UserModule
+    UserModule,
+    AuthModule,
+    
   ]
 })
 export class AppModule {}
