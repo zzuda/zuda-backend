@@ -8,6 +8,8 @@ import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
 
+
+
 @Injectable()
 export class UserService {
   constructor(
@@ -15,6 +17,7 @@ export class UserService {
     private readonly config: ConfigService
   ) {}
 
+  
   async create(createUserDTO: CreateUserDTO): Promise<User> {
     const { email, password } = createUserDTO;
     const exists = await this.existsUser(email);

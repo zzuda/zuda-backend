@@ -1,16 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { IToken } from 'src/auth/auth.model';
+import { AuthError } from '../shared/errors/auth.error';
 
 @Injectable()
 export class AuthService {
-  async register(): Promise<void> {
-    // TODO: Create user data and jwt
+  constructor(private jwtService: JwtService, private configService: ConfigService) {}
+
+  async generateToken(uuid: string): Promise<IToken> {
+    const token = this.jwtService.sign(uuid, {
+      secret: this.configService.get('JWT_SECRET_KEY', 'Default'),
+      expiresIn: `${this.configService.get('JWT_SECRET_EXPIRE_TIME', 'Default')}s`
+    });
+    return {
+      TOKEN: token
+    };
   }
 
-  async login(): Promise<void> {
-    // TODO: Create JWT and validate jwt
+  async validateToken(token: string): Promise<string> {
+    const valid = this.jwtService.verify(token, this.configService.get('JWT_SECRET_KEY'));
+    if (!valid) {
+      throw new NotFoundException(AuthError.INVALID_TOKEN);
+    }
+    return 'true';
   }
 
-  async logout(): Promise<void> {
-    // TOOD: Delete access token and refresh token
+  async refreshToken(uuid: string): Promise<IToken> {
+    const refreshToken = this.jwtService.sign(uuid, {
+      secret: this.configService.get('JWT_REFRESH_KEY', 'Default'),
+      expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRE_TIME', 'Default')}s`
+    });
+
+    return {
+      REFRESH_TOKEN: refreshToken
+    };
   }
 }
