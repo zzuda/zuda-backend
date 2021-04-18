@@ -996,6 +996,14 @@
     "@types/jsonwebtoken" "*"
     "@types/passport-strategy" "*"
 
+"@types/passport-kakao@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@types/passport-kakao/-/passport-kakao-0.2.0.tgz#633d57eec9443b797d67fa18815212c0af2388d4"
+  integrity sha512-Lz9VO9TUluPDzAnv3GHFw5NLsTIR5NYZzJTIhghjFraYxawwZsruXUTAq7gU8F3ukMTw91CELS7T/9pfYCWqSA==
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+
 "@types/passport-local@^1.0.33":
   version "1.0.33"
   resolved "https://registry.yarnpkg.com/@types/passport-local/-/passport-local-1.0.33.tgz#d245b60c5b801cb3aeca1ffab557d5fe1534260d"
