@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
 import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
+import { UserError } from 'src/shared/errors/user.error';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -27,6 +28,9 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
 
     if (exists) {
       const user = await this.userService.findOneByEmail(email);
+      if (user.vendor !== 'kakao') {
+        throw new ConflictException(UserError.USER_ALREADY_EXISTS);
+      }
       return user;
     }
 

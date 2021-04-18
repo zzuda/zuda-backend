@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-naver';
 import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
+import { UserError } from 'src/shared/errors/user.error';
 import { User } from 'src/user/user.model';
 import { UserService } from 'src/user/user.service';
 
@@ -27,6 +28,9 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
 
     if (exists) {
       const user = await this.userService.findOneByEmail(email);
+      if (user.vendor !== 'naver') {
+        throw new ConflictException(UserError.USER_ALREADY_EXISTS);
+      }
       return user;
     }
 

@@ -85,4 +85,82 @@ export class AuthController {
       token: this.authService.generateToken(user.uuid).TOKEN
     };
   }
+
+  @Get('/google')
+  @UseGuards(AuthGuard('google'))
+  googleLogin(): boolean {
+    return true;
+  }
+
+  @Get('/google/c')
+  @UseGuards(AuthGuard('google'))
+  googleLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
+    const user = req.user as User;
+    user.password = '';
+    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
+
+    res.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV', 'production') === 'production',
+      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
+    });
+
+    return {
+      user,
+      token: this.authService.generateToken(user.uuid).TOKEN
+    };
+  }
+
+  @Get('/facebook')
+  @UseGuards(AuthGuard('facebook'))
+  facebookLogin(): boolean {
+    return true;
+  }
+
+  @Get('/facebook/c')
+  @UseGuards(AuthGuard('facebook'))
+  facebookLoginCallback(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ): AuthReturn {
+    const user = req.user as User;
+    user.password = '';
+    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
+
+    res.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV', 'production') === 'production',
+      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
+    });
+
+    return {
+      user,
+      token: this.authService.generateToken(user.uuid).TOKEN
+    };
+  }
+
+  @Get('/kakao')
+  @UseGuards(AuthGuard('kakao'))
+  kakaoLogin(): boolean {
+    return true;
+  }
+
+  @Get('/kakao/c')
+  @UseGuards(AuthGuard('kakao'))
+  kakaoLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
+    const user = req.user as User;
+    user.password = '';
+    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
+
+    res.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV', 'production') === 'production',
+      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
+    });
+
+    return {
+      user,
+      token: this.authService.generateToken(user.uuid).TOKEN
+    };
+  }
 }
