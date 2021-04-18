@@ -1,9 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-facebook';
+import { Profile, Strategy } from 'passport-facebook';
 import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
+import { User } from 'src/user/user.model';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     });
   }
 
-  async validate(_: string, __: string, profile: any): Promise<any> {
+  async validate(_: string, __: string, profile: Profile): Promise<User> {
     // eslint-disable-next-line no-underscore-dangle
     const { email, name } = profile._json;
 

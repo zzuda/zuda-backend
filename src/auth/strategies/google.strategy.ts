@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth2';
 import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
+import { User } from 'src/user/user.model';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(_: string, __: string, profile: any): Promise<any> {
+  async validate(_: string, __: string, profile: any): Promise<User> {
     // eslint-disable-next-line no-underscore-dangle
     const { email, name } = profile._json;
 
