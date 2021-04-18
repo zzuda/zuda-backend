@@ -1,3 +1,5 @@
+import { User } from 'src/user/user.model';
+
 interface ErrorDetail {
   code: string;
   message: string;
@@ -5,9 +7,14 @@ interface ErrorDetail {
 export type ErrorInfo = Record<string, ErrorDetail>;
 
 export interface TokenReturn {
-  TOKEN: string;
+  readonly TOKEN: string;
 }
 
 export interface RefreshTokenReturn {
-  REFRESH_TOKEN: string;
+  readonly REFRESH_TOKEN: string;
+}
+
+export interface AuthReturn {
+  readonly user: User;
+  readonly token: string;
 }
