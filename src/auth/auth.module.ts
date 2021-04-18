@@ -5,7 +5,10 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { FacebookStrategy } from './strategies/facebook.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { KakaoStrategy } from './strategies/kakao.strategy';
 import { NaverStrategy } from './strategies/naver.strategy';
 
 @Module({
@@ -19,7 +22,14 @@ import { NaverStrategy } from './strategies/naver.strategy';
       inject: [ConfigService]
     })
   ],
-  providers: [JwtStrategy, NaverStrategy, AuthService],
+  providers: [
+    JwtStrategy,
+    NaverStrategy,
+    GoogleStrategy,
+    FacebookStrategy,
+    KakaoStrategy,
+    AuthService
+  ],
   exports: [JwtModule],
   controllers: [AuthController]
 })
