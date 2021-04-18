@@ -13,6 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request, Response } from 'express';
 import { AuthError } from 'src/shared/errors/auth.error';
+import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
 import { AuthReturn } from 'src/types';
 import { User } from 'src/user/user.model';
 import { UserService } from 'src/user/user.service';
@@ -27,6 +28,12 @@ export class AuthController {
     private readonly userService: UserService,
     private readonly configService: ConfigService
   ) {}
+
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  get(@Req() req: Request): User {
+    return req.user as User;
+  }
 
   @Post('/register')
   async localRegister(@Body() registerDTO: LocalRegisterDTO): Promise<User> {
