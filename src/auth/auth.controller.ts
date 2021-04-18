@@ -2,10 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   NotFoundException,
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -169,5 +171,16 @@ export class AuthController {
       user,
       token: this.authService.generateToken(user.uuid).TOKEN
     };
+  }
+
+  @Post('/token')
+  getToken(@Req() req: Request): string {
+    const refreshToken = req.cookies.refreshtoken;
+
+    const decode = this.authService.validateToken(refreshToken, true);
+    if (!decode) throw new UnauthorizedException(AuthError.PERMISSION);
+
+    const token = this.authService.generateToken(decode.uuid).TOKEN;
+    return token;
   }
 }

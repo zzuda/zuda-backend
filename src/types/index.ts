@@ -18,3 +18,9 @@ export interface AuthReturn {
   readonly user: User;
   readonly token: string;
 }
+
+export interface JwtPayload {
+  readonly iat: number;
+  readonly exp: number;
+  readonly uuid: string;
+}

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, Res, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
-import { RefreshTokenReturn, TokenReturn } from 'src/types';
+import { AuthError } from 'src/shared/errors/auth.error';
+import { JwtPayload, RefreshTokenReturn, TokenReturn } from 'src/types';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -28,12 +29,18 @@ export class AuthService {
     };
   }
 
-  validateToken(token: string): boolean {
-    const valid = this.jwtService.verify(token, this.configService.get('JWT_SECRET_KEY'));
-    if (!valid) {
-      return false;
+  validateToken(token: string, isRefreshToken?: boolean): JwtPayload | undefined {
+    const secret = isRefreshToken
+      ? this.configService.get('JWT_REFRESH_KEY', 'Default')
+      : this.configService.get('JWT_SECRET_KEY', 'Default');
+
+    try {
+      return this.jwtService.verify<JwtPayload>(token, {
+        secret
+      });
+    } catch (e) {
+      return undefined;
     }
-    return true;
   }
 
   async validateLocalLogin(email: string, password: string): Promise<boolean> {
