@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   NotFoundException,
@@ -182,5 +183,11 @@ export class AuthController {
 
     const token = this.authService.generateToken(decode.uuid).TOKEN;
     return token;
+  }
+
+  @Delete('/logout')
+  logout(@Res() res: Response): boolean {
+    res.clearCookie('refreshtoken');
+    return true;
   }
 }
