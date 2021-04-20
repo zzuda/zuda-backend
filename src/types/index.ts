@@ -1,4 +1,4 @@
-import { User } from 'src/user/user.model';
+import { User } from 'src/user/user.entity';
 
 interface ErrorDetail {
   code: string;

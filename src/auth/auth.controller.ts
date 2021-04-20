@@ -17,7 +17,7 @@ import { Request, Response } from 'express';
 import { AuthError } from 'src/shared/errors/auth.error';
 import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
 import { AuthReturn } from 'src/types';
-import { User } from 'src/user/user.model';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { LocalLoginDTO } from './dto/local-login.dto';

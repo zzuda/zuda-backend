@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth2';
 import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
-import { User } from 'src/user/user.model';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
