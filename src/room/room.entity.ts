@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
@@ -19,9 +20,6 @@ export class Room {
   @Column('varchar')
   inviteCode!: string;
 
-  @Column('uuid')
-  owner!: string;
-
   @Column('integer')
   maxPeople!: number;
 
@@ -31,6 +29,9 @@ export class Room {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.rooms)
-  user!: User;
+  @ManyToOne(() => User, (user) => user.rooms, {
+    onDelete: 'CASCADE'
+  })
+  @JoinColumn({ name: 'owner' })
+  owner!: User;
 }
