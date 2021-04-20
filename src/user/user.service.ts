@@ -1,17 +1,18 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcrypt';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDTO } from '../shared/dto/create-user.dto';
-import { User } from './user.model';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { User } from './user.model';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User) private readonly userModel: typeof User,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly config: ConfigService
   ) {}
 
@@ -27,7 +28,7 @@ export class UserService {
       hashed = await bcrypt.hash(password, hashRound);
     }
 
-    const result = await this.userModel.create({
+    const result = this.userRepository.create({
       ...createUserDTO,
       uuid: uuidv4(),
       password: hashed
@@ -67,15 +68,13 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    const result = await this.userModel.findAll();
+    const result = await this.userRepository.find();
     return result;
   }
 
   async findOneByUUID(uuid: string): Promise<User> {
-    const result = await this.userModel.findOne({
-      where: {
-        uuid
-      }
+    const result = await this.userRepository.findOne({
+      uuid
     });
 
     if (!result) {
@@ -86,10 +85,8 @@ export class UserService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const result = await this.userModel.findOne({
-      where: {
-        email
-      }
+    const result = await this.userRepository.findOne({
+      email
     });
 
     if (!result) {
@@ -101,13 +98,16 @@ export class UserService {
 
   async update(updateUserDTO: UpdateUserDTO): Promise<User> {
     const result = await this.findOneByUUID(updateUserDTO.uuid);
-    await result.update(updateUserDTO);
+    await this.userRepository.save({
+      ...result,
+      ...updateUserDTO
+    });
     return result;
   }
 
   async delete(uuid: string): Promise<User> {
     const result = await this.findOneByUUID(uuid);
-    await result.destroy();
+    await this.userRepository.softRemove(result);
     return result;
   }
 }

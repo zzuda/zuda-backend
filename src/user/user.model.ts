@@ -1,58 +1,35 @@
 import {
-  AllowNull,
   Column,
-  CreatedAt,
-  DataType,
-  DeletedAt,
-  Model,
-  PrimaryKey,
-  Table,
-  Unique,
-  UpdatedAt
-} from 'sequelize-typescript';
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryColumn,
+  UpdateDateColumn
+} from 'typeorm';
 
-interface IUser {
-  uuid: string;
-  email: string;
-  vendor?: string;
-  password?: string;
-  name: string;
-}
-
-@Table({
-  timestamps: true,
-  paranoid: true
-})
-export class User extends Model<IUser> {
-  @PrimaryKey
-  @Unique
-  @Column({ type: DataType.UUID })
+@Entity('User')
+export class User {
+  @PrimaryColumn('uuid')
   uuid!: string;
 
-  @Unique
-  @Column({ type: DataType.CHAR })
+  @Column('char', { unique: true })
   email!: string;
 
-  @AllowNull
-  @Column({ type: DataType.STRING })
+  @Column('string', { nullable: true })
   vendor?: string;
 
-  @AllowNull
-  @Column({ type: DataType.STRING })
+  @Column('string', { nullable: true })
   password?: string;
 
-  @Column({ type: DataType.STRING })
+  @Column('string')
   name!: string;
 
-  @CreatedAt
-  @Column
+  @CreateDateColumn()
   readonly createdAt!: Date;
 
-  @UpdatedAt
-  @Column
+  @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  @DeletedAt
-  @Column
+  @DeleteDateColumn()
   readonly deletedAt?: Date;
 }

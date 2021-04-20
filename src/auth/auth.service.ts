@@ -1,8 +1,7 @@
-import { Injectable, Logger, Res, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
-import { AuthError } from 'src/shared/errors/auth.error';
 import { JwtPayload, RefreshTokenReturn, TokenReturn } from 'src/types';
 import { UserService } from 'src/user/user.service';
 

@@ -1,25 +1,23 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    SequelizeModule.forRootAsync({
+    TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        dialect: 'mysql',
+        type: 'mysql',
         host: config.get<string>('DATABASE_HOST', 'localhost'),
         port: config.get<number>('DATABASE_PORT', 3306),
         username: config.get<string>('DATABASE_USERNAME', 'root'),
         password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
-
-        autoLoadModels: true,
-        logging: false
+        autoLoadModels: true
       })
     }),
     ThrottlerModule.forRoot({
