@@ -11,10 +11,10 @@ export class Room {
   @PrimaryGeneratedColumn()
   roomID!: string;
 
-  @Column('string', { unique: true })
+  @Column('varchar', { unique: true })
   roomName!: string;
 
-  @Column('string')
+  @Column('varchar')
   inviteCode!: string;
 
   @Column('uuid')
