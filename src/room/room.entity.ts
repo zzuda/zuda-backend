@@ -1,7 +1,9 @@
+import { User } from 'src/user/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
@@ -28,4 +30,7 @@ export class Room {
 
   @UpdateDateColumn()
   readonly updatedAt!: Date;
+
+  @ManyToOne(() => User, (user) => user.rooms)
+  user!: User;
 }
