@@ -1,8 +1,10 @@
+import { Room } from 'src/room/room.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn
 } from 'typeorm';
@@ -32,4 +34,7 @@ export class User {
 
   @DeleteDateColumn()
   readonly deletedAt?: Date;
+
+  @OneToMany(() => Room, (room) => room.owner)
+  rooms!: Room[];
 }

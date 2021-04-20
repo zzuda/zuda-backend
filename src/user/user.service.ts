@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDTO } from '../shared/dto/create-user.dto';
 import { UserError } from '../shared/errors/user.error';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { User } from './user.model';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {

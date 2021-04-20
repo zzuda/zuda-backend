@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
+import { RoomModule } from './room/room.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -25,7 +26,8 @@ import { UserModule } from './user/user.module';
       limit: 1000
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    RoomModule
   ]
 })
 export class AppModule {}
