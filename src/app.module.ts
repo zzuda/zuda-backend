@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
@@ -22,6 +23,19 @@ import { UserModule } from './user/user.module';
         database: config.get<string>('DATABASE_DB', 'zuda'),
         entities: [User, Room]
       })
+    }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const host = config.get('MONGO_HOST', 'localhost');
+        const port = config.get('MONGO_PORT', 27017);
+        const username = config.get('MONGO_USERNAME', '');
+        const password = config.get('MONGO_PASSWORD', '');
+
+        return {
+          uri: `mongodb://${username}:${password}@${host}:${port}`
+        };
+      }
     }),
     ThrottlerModule.forRoot({
       ttl: 60,
