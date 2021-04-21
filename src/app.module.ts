@@ -8,6 +8,8 @@ import { Room } from './room/room.entity';
 import { RoomModule } from './room/room.module';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
+import { Word } from './word/word.entity';
+import { WordModule } from './word/word.module';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { UserModule } from './user/user.module';
         username: config.get<string>('DATABASE_USERNAME', 'root'),
         password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
-        entities: [User, Room]
+        entities: [User, Room, Word]
       })
     }),
     MongooseModule.forRootAsync({
@@ -43,7 +45,8 @@ import { UserModule } from './user/user.module';
     }),
     UserModule,
     AuthModule,
-    RoomModule
+    RoomModule,
+    WordModule
   ]
 })
 export class AppModule {}
