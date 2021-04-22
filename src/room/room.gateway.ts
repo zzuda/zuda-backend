@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Server } from 'socket.io';
+import { JoinSocketRequest, QuitSocketRequest } from 'src/types/socket';
 import { RoomService } from './room.service';
 
 @WebSocketGateway({
@@ -19,8 +20,8 @@ export class RoomGateway {
   private readonly server!: Server;
 
   @SubscribeMessage('join')
-  join(@MessageBody() data: string): WsResponse<unknown> {
-    const { roomId } = (data as unknown) as Record<string, any>;
+  join(@MessageBody() data: JoinSocketRequest): WsResponse<unknown> {
+    const { roomId } = data;
 
     this.roomService.joinRoom(roomId);
 
@@ -31,8 +32,8 @@ export class RoomGateway {
   }
 
   @SubscribeMessage('quit')
-  quit(@MessageBody() data: string): WsResponse<unknown> {
-    const { roomId, userId } = (data as unknown) as Record<string, any>;
+  quit(@MessageBody() data: QuitSocketRequest): WsResponse<unknown> {
+    const { roomId, userId } = data;
 
     this.roomService.quitRoom(roomId, userId);
 
