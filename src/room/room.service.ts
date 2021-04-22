@@ -4,8 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { RoomError } from 'src/shared/errors/room.error';
+import { WordService } from 'src/word/word.service';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateRoomDTO } from './dto/create-room.dto';
 import { Room } from './room.entity';
 import { RoomMember, RoomMemberDocument } from './room.schema';
 
@@ -13,8 +15,25 @@ import { RoomMember, RoomMemberDocument } from './room.schema';
 export class RoomService {
   constructor(
     @InjectRepository(Room) private readonly roomRepository: Repository<Room>,
-    @InjectModel(RoomMember.name) private readonly roomMemberModel: Model<RoomMemberDocument>
+    @InjectModel(RoomMember.name) private readonly roomMemberModel: Model<RoomMemberDocument>,
+    private readonly wordService: WordService
   ) {}
+
+  async create(createRoomDto: CreateRoomDTO): Promise<Room> {
+    const inviteCode = await this.wordService.makeRandomWord();
+
+    const exists = await this.existsRoomByName(createRoomDto.roomName);
+    if (exists) throw new ConflictException(RoomError.ROOM_NAME_USED);
+
+    const room = new Room();
+    room.roomName = createRoomDto.roomName;
+    room.owner = createRoomDto.owner;
+    room.maxPeople = createRoomDto.maxPeople;
+    room.inviteCode = inviteCode;
+    this.roomRepository.save(room);
+
+    return room;
+  }
 
   async findAll(): Promise<Room[]> {
     const result = await this.roomRepository.find();
@@ -25,6 +44,16 @@ export class RoomService {
     const room = await this.roomRepository.findOne(roomId);
 
     if (!room) throw new WsException(RoomError.ROOM_NOT_FOUND);
+
+    return room;
+  }
+
+  async getRoomByName(roomName: string): Promise<Room> {
+    const room = await this.roomRepository.findOne({
+      roomName
+    });
+
+    if (!room) throw new ConflictException(RoomError.ROOM_NOT_FOUND);
 
     return room;
   }
@@ -40,10 +69,23 @@ export class RoomService {
 
   async existsRoom(roomId: number): Promise<boolean> {
     try {
-      const room = this.getRoom(roomId);
+      const room = await this.getRoom(roomId);
       if (room) return true;
     } catch (e) {
       if (e instanceof WsException) {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  async existsRoomByName(roomName: string): Promise<boolean> {
+    try {
+      const room = await this.getRoomByName(roomName);
+      if (room) return true;
+    } catch (e) {
+      if (e instanceof ConflictException) {
         return false;
       }
     }
