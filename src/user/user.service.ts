@@ -28,11 +28,13 @@ export class UserService {
       hashed = await bcrypt.hash(password, hashRound);
     }
 
-    const result = this.userRepository.create({
-      ...createUserDTO,
-      uuid: uuidv4(),
-      password: hashed
-    });
+    const result = new User();
+    result.uuid = uuidv4();
+    result.password = hashed;
+    result.email = createUserDTO.email;
+    result.vendor = createUserDTO.vendor;
+    result.name = createUserDTO.name;
+    this.userRepository.save(result);
 
     return result;
   }
