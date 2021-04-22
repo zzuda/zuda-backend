@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -9,27 +8,38 @@ import {
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Server, Socket } from 'socket.io';
+import { RoomService } from './room.service';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  namespace: 'room'
+})
 export class RoomGateway {
+  constructor(private readonly roomService: RoomService) {}
+
   @WebSocketServer()
   private readonly server!: Server;
 
   @SubscribeMessage('join')
-  join(@ConnectedSocket() client: Socket, @MessageBody() data: string): WsResponse<unknown> {
-    Logger.debug(data);
+  join(@MessageBody() data: string): WsResponse<unknown> {
+    const { roomId } = (data as unknown) as Record<string, any>;
+
+    this.roomService.joinRoom(roomId);
+
     return {
       event: 'join',
-      data: 'test'
+      data: true
     };
   }
 
   @SubscribeMessage('quit')
-  quit(@ConnectedSocket() client: Socket, @MessageBody() data: string): WsResponse<unknown> {
-    Logger.debug(data);
+  quit(@MessageBody() data: string): WsResponse<unknown> {
+    const { roomId, userId } = (data as unknown) as Record<string, any>;
+
+    this.roomService.quitRoom(roomId, userId);
+
     return {
       event: 'quit',
-      data: 'test'
+      data: true
     };
   }
 }
