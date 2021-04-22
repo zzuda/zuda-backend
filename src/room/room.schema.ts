@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema()
+@Schema({
+  versionKey: false
+})
 export class RoomMember {
   @Prop()
   roomId!: number;
