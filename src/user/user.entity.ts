@@ -14,7 +14,7 @@ export class User {
   @PrimaryColumn('uuid')
   uuid!: string;
 
-  @Column('char', { unique: true })
+  @Column('char', { length: 60, unique: true })
   email!: string;
 
   @Column('varchar', { nullable: true })
