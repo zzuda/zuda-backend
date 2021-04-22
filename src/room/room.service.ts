@@ -16,6 +16,11 @@ export class RoomService {
     @InjectModel(RoomMember.name) private readonly roomMemberModel: Model<RoomMemberDocument>
   ) {}
 
+  async findAll(): Promise<Room[]> {
+    const result = await this.roomRepository.find();
+    return result;
+  }
+
   async getRoom(roomId: number): Promise<Room> {
     const room = await this.roomRepository.findOne(roomId);
 
