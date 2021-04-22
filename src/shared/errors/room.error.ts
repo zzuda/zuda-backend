@@ -12,5 +12,13 @@ export const RoomError: ErrorInfo = {
   INVITE_CODE_NOT_FOUND: {
     code: 'room-404-1',
     message: '올바르지 않은 초대코드입니다.'
+  },
+  GUEST_ALREADY_JOIN: {
+    code: 'room-409-1',
+    message: '같은 사용자가 이미 입장하였습니다.'
+  },
+  GUEST_NOT_FOUND: {
+    code: 'room-404-2',
+    message: '방에 입장하지 않은 사용자입니다.'
   }
 };
