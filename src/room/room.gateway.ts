@@ -1,5 +1,4 @@
 import {
-  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
@@ -7,7 +6,7 @@ import {
   WsResponse
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { RoomService } from './room.service';
 
 @WebSocketGateway({
