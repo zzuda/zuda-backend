@@ -31,4 +31,12 @@ export class RoomMemberService {
     if (currentMember === maxPeople) return true;
     return false;
   }
+
+  async deleteRoomMember(roomId: number): Promise<RoomMemberDocument> {
+    const roomMember = await this.getRoomMember(roomId);
+
+    await roomMember.remove();
+
+    return roomMember;
+  }
 }
