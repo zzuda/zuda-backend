@@ -31,7 +31,12 @@ export class RoomService {
     room.owner = createRoomDto.owner;
     room.maxPeople = createRoomDto.maxPeople;
     room.inviteCode = inviteCode;
-    this.roomRepository.save(room);
+    await this.roomRepository.save(room);
+
+    await this.roomMemberModel.create({
+      roomId: room.roomId,
+      members: []
+    });
 
     return room;
   }
@@ -141,7 +146,7 @@ export class RoomService {
       throw new WsException(RoomError.GUEST_ALREADY_JOIN);
 
     roomMember.members.push(guestUserId);
-    roomMember.save();
+    await roomMember.save();
 
     const room = await this.getRoom(roomId);
 
@@ -163,6 +168,6 @@ export class RoomService {
     const guestIndex = roomMember.members.findIndex((i) => i === userId);
 
     roomMember.members.splice(guestIndex, 1);
-    roomMember.save();
+    await roomMember.save();
   }
 }

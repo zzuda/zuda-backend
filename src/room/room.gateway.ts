@@ -1,15 +1,13 @@
-import { Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
   WsException,
   WsResponse
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { JoinSocketRequest, QuitSocketRequest } from 'src/types/socket';
 import { RoomService } from './room.service';
 
@@ -18,9 +16,6 @@ import { RoomService } from './room.service';
 })
 export class RoomGateway {
   constructor(private readonly roomService: RoomService) {}
-
-  @WebSocketServer()
-  private readonly server!: Server;
 
   @SubscribeMessage('join')
   async join(
@@ -32,7 +27,7 @@ export class RoomGateway {
 
       const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-      const result = this.roomService.joinRoom(roomId);
+      const result = await this.roomService.joinRoom(roomId);
       socket.join(`room-${roomId}`);
 
       return {
@@ -40,23 +35,27 @@ export class RoomGateway {
         data: result
       };
     } catch (e) {
-      throw new WsException(e.response);
+      throw new WsException(e.response || e.error);
     }
   }
 
   @SubscribeMessage('quit')
-  quit(
+  async quit(
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: QuitSocketRequest
-  ): WsResponse<unknown> {
-    const { roomId, userId } = data;
+  ): Promise<WsResponse<unknown>> {
+    try {
+      const { roomId, userId } = data;
 
-    this.roomService.quitRoom(roomId, userId);
-    socket.leave(`room-${roomId}`);
+      await this.roomService.quitRoom(roomId, userId);
+      socket.leave(`room-${roomId}`);
 
-    return {
-      event: 'quit',
-      data: true
-    };
+      return {
+        event: 'quit',
+        data: true
+      };
+    } catch (e) {
+      throw new WsException(e.response || e.error);
+    }
   }
 }
