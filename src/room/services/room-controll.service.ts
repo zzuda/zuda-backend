@@ -39,7 +39,7 @@ export class RoomControllService {
   }
 
   async quitRoom(roomId: number, userId: string): Promise<void> {
-    const exists = this.roomService.existsRoom(roomId);
+    const exists = await this.roomService.existsRoom(roomId);
 
     if (!exists) throw new WsException(RoomError.ROOM_NOT_FOUND);
 

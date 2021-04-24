@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoomError } from 'src/shared/errors/room.error';
-import { WordService } from 'src/word/word.service';
 import { RoomMember, RoomMemberDocument } from '../room.schema';
 import { RoomService } from './room.service';
 
@@ -14,9 +13,11 @@ export class RoomMemberService {
   ) {}
 
   async getRoomMember(roomId: number): Promise<RoomMemberDocument> {
-    const roomMember = this.roomMemberModel.findOne({
-      roomId
-    });
+    const roomMember = await this.roomMemberModel
+      .findOne({
+        roomId
+      })
+      .exec();
     if (!roomMember) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
 
     return (roomMember as unknown) as RoomMemberDocument;
