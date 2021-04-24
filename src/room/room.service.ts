@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
@@ -43,7 +43,7 @@ export class RoomService {
   async getRoom(roomId: number): Promise<Room> {
     const room = await this.roomRepository.findOne(roomId);
 
-    if (!room) throw new WsException(RoomError.ROOM_NOT_FOUND);
+    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
 
     return room;
   }
@@ -53,7 +53,17 @@ export class RoomService {
       roomName
     });
 
-    if (!room) throw new ConflictException(RoomError.ROOM_NOT_FOUND);
+    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
+
+    return room;
+  }
+
+  async getRoomByCode(inviteCode: string): Promise<Room> {
+    const room = await this.roomRepository.findOne({
+      inviteCode
+    });
+
+    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
 
     return room;
   }
@@ -62,7 +72,7 @@ export class RoomService {
     const roomMember = this.roomMemberModel.findOne({
       roomId
     });
-    if (!roomMember) throw new WsException(RoomError.ROOM_NOT_FOUND);
+    if (!roomMember) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
 
     return (roomMember as unknown) as RoomMemberDocument;
   }
@@ -72,7 +82,7 @@ export class RoomService {
       const room = await this.getRoom(roomId);
       if (room) return true;
     } catch (e) {
-      if (e instanceof WsException) {
+      if (e instanceof NotFoundException) {
         return false;
       }
     }
@@ -85,7 +95,20 @@ export class RoomService {
       const room = await this.getRoomByName(roomName);
       if (room) return true;
     } catch (e) {
-      if (e instanceof ConflictException) {
+      if (e instanceof NotFoundException) {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  async existsRoomByCode(inviteCode: string): Promise<boolean> {
+    try {
+      const room = await this.getRoomByCode(inviteCode);
+      if (room) return true;
+    } catch (e) {
+      if (e instanceof NotFoundException) {
         return false;
       }
     }
@@ -108,7 +131,7 @@ export class RoomService {
 
   async joinRoom(roomId: number, userId?: string): Promise<void> {
     const isFull = await this.isRoomFull(roomId);
-    if (isFull) throw new ConflictException(RoomError.ROOM_IS_FULL);
+    if (isFull) throw new WsException(RoomError.ROOM_IS_FULL);
 
     const guestUserId = userId || this.generateGuestId();
     const roomMember = await this.getRoomMember(roomId);
