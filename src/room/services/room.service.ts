@@ -6,6 +6,7 @@ import { RoomError } from 'src/shared/errors/room.error';
 import { WordService } from 'src/word/word.service';
 import { Repository } from 'typeorm';
 import { CreateRoomDTO } from '../dto/create-room.dto';
+import { UpdateRoomDTO } from '../dto/update-room.dto';
 import { Room } from '../room.entity';
 import { RoomMember, RoomMemberDocument } from '../room.schema';
 
@@ -35,6 +36,21 @@ export class RoomService {
       members: []
     });
 
+    return room;
+  }
+
+  async update(updateRoomDto: UpdateRoomDTO): Promise<Room> {
+    const room = await this.getRoom(updateRoomDto.roomId);
+    const result = await this.roomRepository.save({
+      ...room,
+      ...updateRoomDto
+    });
+    return result;
+  }
+
+  async delete(roomId: number): Promise<Room> {
+    const room = await this.getRoom(roomId);
+    await this.roomRepository.remove(room);
     return room;
   }
 

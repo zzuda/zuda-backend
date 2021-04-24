@@ -99,9 +99,9 @@ export class UserService {
   }
 
   async update(updateUserDTO: UpdateUserDTO): Promise<User> {
-    const result = await this.findOneByUUID(updateUserDTO.uuid);
-    await this.userRepository.save({
-      ...result,
+    const current = await this.findOneByUUID(updateUserDTO.uuid);
+    const result = await this.userRepository.save({
+      ...current,
       ...updateUserDTO
     });
     return result;
