@@ -1,3 +1,4 @@
+import { Room } from 'src/room/room.entity';
 import { User } from 'src/user/user.entity';
 
 interface ErrorDetail {
@@ -23,4 +24,9 @@ export interface JwtPayload {
   readonly iat: number;
   readonly exp: number;
   readonly uuid: string;
+}
+
+export interface RoomInteractReturn {
+  readonly guestId: string;
+  readonly roomInfo: Room;
 }

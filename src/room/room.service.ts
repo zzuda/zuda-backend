@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { RoomError } from 'src/shared/errors/room.error';
+import { RoomInteractReturn } from 'src/types';
 import { WordService } from 'src/word/word.service';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -129,7 +130,7 @@ export class RoomService {
     return uuidv4();
   }
 
-  async joinRoom(roomId: number, userId?: string): Promise<void> {
+  async joinRoom(roomId: number, userId?: string): Promise<RoomInteractReturn> {
     const isFull = await this.isRoomFull(roomId);
     if (isFull) throw new WsException(RoomError.ROOM_IS_FULL);
 
@@ -141,6 +142,13 @@ export class RoomService {
 
     roomMember.members.push(guestUserId);
     roomMember.save();
+
+    const room = await this.getRoom(roomId);
+
+    return {
+      guestId: guestUserId,
+      roomInfo: room
+    };
   }
 
   async quitRoom(roomId: number, userId: string): Promise<void> {
