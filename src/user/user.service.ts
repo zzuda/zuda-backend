@@ -34,7 +34,7 @@ export class UserService {
     result.email = createUserDTO.email;
     result.vendor = createUserDTO.vendor;
     result.name = createUserDTO.name;
-    this.userRepository.save(result);
+    await this.userRepository.save(result);
 
     return result;
   }
