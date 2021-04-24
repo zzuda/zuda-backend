@@ -1,9 +1,11 @@
+import { Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
   WsResponse
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -21,19 +23,25 @@ export class RoomGateway {
   private readonly server!: Server;
 
   @SubscribeMessage('join')
-  join(
+  async join(
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: JoinSocketRequest
-  ): WsResponse<unknown> {
-    const { roomId } = data;
+  ): Promise<WsResponse<unknown>> {
+    try {
+      const { inviteCode } = data;
 
-    const result = this.roomService.joinRoom(roomId);
-    socket.join(`room-${roomId}`);
+      const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-    return {
-      event: 'join',
-      data: result
-    };
+      const result = this.roomService.joinRoom(roomId);
+      socket.join(`room-${roomId}`);
+
+      return {
+        event: 'join',
+        data: result
+      };
+    } catch (e) {
+      throw new WsException(e.response);
+    }
   }
 
   @SubscribeMessage('quit')
