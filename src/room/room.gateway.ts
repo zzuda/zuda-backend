@@ -9,13 +9,17 @@ import {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Socket } from 'socket.io';
 import { JoinSocketRequest, QuitSocketRequest } from 'src/types/socket';
-import { RoomService } from './room.service';
+import { RoomControllService } from './services/room-controll.service';
+import { RoomService } from './services/room.service';
 
 @WebSocketGateway({
   namespace: 'room'
 })
 export class RoomGateway {
-  constructor(private readonly roomService: RoomService) {}
+  constructor(
+    private readonly roomService: RoomService,
+    private readonly roomControllService: RoomControllService
+  ) {}
 
   @SubscribeMessage('join')
   async join(
@@ -27,7 +31,7 @@ export class RoomGateway {
 
       const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-      const result = await this.roomService.joinRoom(roomId);
+      const result = await this.roomControllService.joinRoom(roomId);
       socket.join(`room-${roomId}`);
 
       return {
@@ -47,7 +51,7 @@ export class RoomGateway {
     try {
       const { roomId, userId } = data;
 
-      await this.roomService.quitRoom(roomId, userId);
+      await this.roomControllService.quitRoom(roomId, userId);
       socket.leave(`room-${roomId}`);
 
       return {

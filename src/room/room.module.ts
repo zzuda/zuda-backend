@@ -7,7 +7,9 @@ import { RoomController } from './room.controller';
 import { Room } from './room.entity';
 import { RoomGateway } from './room.gateway';
 import { RoomMember, RoomMemberSchema } from './room.schema';
-import { RoomService } from './room.service';
+import { RoomControllService } from './services/room-controll.service';
+import { RoomMemberService } from './services/room-member.service';
+import { RoomService } from './services/room.service';
 
 @Module({
   imports: [
@@ -17,6 +19,6 @@ import { RoomService } from './room.service';
     UserModule
   ],
   controllers: [RoomController],
-  providers: [RoomService, RoomGateway]
+  providers: [RoomService, RoomMemberService, RoomControllService, RoomGateway]
 })
 export class RoomModule {}

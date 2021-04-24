@@ -3,7 +3,7 @@ import { UserService } from 'src/user/user.service';
 import { CreateRoomBodyDTO } from './dto/create-room-body.dto';
 import { CreateRoomDTO } from './dto/create-room.dto';
 import { Room } from './room.entity';
-import { RoomService } from './room.service';
+import { RoomService } from './services/room.service';
 
 @Controller('room')
 export class RoomController {
