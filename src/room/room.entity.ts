@@ -12,7 +12,7 @@ import {
 @Entity('Room')
 export class Room {
   @PrimaryGeneratedColumn()
-  roomID!: string;
+  roomId!: number;
 
   @Column('varchar', { unique: true })
   roomName!: string;
