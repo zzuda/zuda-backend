@@ -1,45 +1,65 @@
 import {
+  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
+  WsException,
   WsResponse
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Server } from 'socket.io';
+import { Socket } from 'socket.io';
 import { JoinSocketRequest, QuitSocketRequest } from 'src/types/socket';
-import { RoomService } from './room.service';
+import { RoomControllService } from './services/room-controll.service';
+import { RoomService } from './services/room.service';
 
 @WebSocketGateway({
   namespace: 'room'
 })
 export class RoomGateway {
-  constructor(private readonly roomService: RoomService) {}
-
-  @WebSocketServer()
-  private readonly server!: Server;
+  constructor(
+    private readonly roomService: RoomService,
+    private readonly roomControllService: RoomControllService
+  ) {}
 
   @SubscribeMessage('join')
-  join(@MessageBody() data: JoinSocketRequest): WsResponse<unknown> {
-    const { roomId } = data;
+  async join(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: JoinSocketRequest
+  ): Promise<WsResponse<unknown>> {
+    try {
+      const { inviteCode } = data;
 
-    this.roomService.joinRoom(roomId);
+      const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-    return {
-      event: 'join',
-      data: true
-    };
+      const result = await this.roomControllService.joinRoom(roomId);
+      socket.join(`room-${roomId}`);
+
+      return {
+        event: 'join',
+        data: result
+      };
+    } catch (e) {
+      throw new WsException(e.response || e.error);
+    }
   }
 
   @SubscribeMessage('quit')
-  quit(@MessageBody() data: QuitSocketRequest): WsResponse<unknown> {
-    const { roomId, userId } = data;
+  async quit(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: QuitSocketRequest
+  ): Promise<WsResponse<unknown>> {
+    try {
+      const { roomId, userId } = data;
 
-    this.roomService.quitRoom(roomId, userId);
+      await this.roomControllService.quitRoom(roomId, userId);
+      socket.leave(`room-${roomId}`);
 
-    return {
-      event: 'quit',
-      data: true
-    };
+      return {
+        event: 'quit',
+        data: true
+      };
+    } catch (e) {
+      throw new WsException(e.response || e.error);
+    }
   }
 }

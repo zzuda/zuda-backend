@@ -22,7 +22,7 @@ export class UserController {
     return result;
   }
 
-  @Get()
+  @Get('/:uuid')
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('uuid') uuid: string): Promise<User> {
     const result = await this.userService.findOneByUUID(uuid);

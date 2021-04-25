@@ -1,5 +1,5 @@
 export interface JoinSocketRequest {
-  readonly roomId: number;
+  readonly inviteCode: string;
 }
 
 export interface QuitSocketRequest {

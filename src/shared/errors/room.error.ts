@@ -20,5 +20,9 @@ export const RoomError: ErrorInfo = {
   GUEST_NOT_FOUND: {
     code: 'room-404-2',
     message: '방에 입장하지 않은 사용자입니다.'
+  },
+  ROOM_NAME_USED: {
+    code: 'room-409-2',
+    message: '이미 사용 중인 방 이름입니다.'
   }
 };

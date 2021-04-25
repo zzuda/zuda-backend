@@ -28,11 +28,13 @@ export class UserService {
       hashed = await bcrypt.hash(password, hashRound);
     }
 
-    const result = this.userRepository.create({
-      ...createUserDTO,
-      uuid: uuidv4(),
-      password: hashed
-    });
+    const result = new User();
+    result.uuid = uuidv4();
+    result.password = hashed;
+    result.email = createUserDTO.email;
+    result.vendor = createUserDTO.vendor;
+    result.name = createUserDTO.name;
+    await this.userRepository.save(result);
 
     return result;
   }
@@ -97,9 +99,9 @@ export class UserService {
   }
 
   async update(updateUserDTO: UpdateUserDTO): Promise<User> {
-    const result = await this.findOneByUUID(updateUserDTO.uuid);
-    await this.userRepository.save({
-      ...result,
+    const current = await this.findOneByUUID(updateUserDTO.uuid);
+    const result = await this.userRepository.save({
+      ...current,
       ...updateUserDTO
     });
     return result;
