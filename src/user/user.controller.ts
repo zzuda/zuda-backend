@@ -29,10 +29,10 @@ export class UserController {
     return result;
   }
 
-  @Put()
+  @Put('/:uuid')
   // TODO: 제 3자 수정은 관리자만 가능해야 함. 자기 자신은 로그인한 사용자만 가능해야 함.
-  async update(@Body() updateUserDTO: UpdateUserDTO): Promise<User> {
-    const result = await this.userService.update(updateUserDTO);
+  async update(@Param('uuid') uuid: string, @Body() updateUserDTO: UpdateUserDTO): Promise<User> {
+    const result = await this.userService.update(uuid, updateUserDTO);
     return result;
   }
 }

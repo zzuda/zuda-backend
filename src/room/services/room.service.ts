@@ -39,8 +39,8 @@ export class RoomService {
     return room;
   }
 
-  async update(updateRoomDto: UpdateRoomDTO): Promise<Room> {
-    const room = await this.getRoom(updateRoomDto.roomId);
+  async update(roomId: number, updateRoomDto: UpdateRoomDTO): Promise<Room> {
+    const room = await this.getRoom(roomId);
     const result = await this.roomRepository.save({
       ...room,
       ...updateRoomDto

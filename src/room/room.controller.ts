@@ -45,10 +45,13 @@ export class RoomController {
     return result;
   }
 
-  @Put()
+  @Put('/:roomId')
   @UseGuards(JwtAuthGuard)
-  async update(@Body() updateRoomDto: UpdateRoomDTO): Promise<Room> {
-    const result = await this.roomService.update(updateRoomDto);
+  async update(
+    @Param('roomId') roomId: number,
+    @Body() updateRoomDto: UpdateRoomDTO
+  ): Promise<Room> {
+    const result = await this.roomService.update(roomId, updateRoomDto);
     return result;
   }
 

@@ -98,8 +98,8 @@ export class UserService {
     return result;
   }
 
-  async update(updateUserDTO: UpdateUserDTO): Promise<User> {
-    const current = await this.findOneByUUID(updateUserDTO.uuid);
+  async update(uuid: string, updateUserDTO: UpdateUserDTO): Promise<User> {
+    const current = await this.findOneByUUID(uuid);
     const result = await this.userRepository.save({
       ...current,
       ...updateUserDTO
