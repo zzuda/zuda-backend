@@ -19,7 +19,7 @@ import { WordModule } from './word/word.module';
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
         host: config.get<string>('DATABASE_HOST', 'localhost'),
-        port: config.get<number>('DATABASE_PORT', 3306),
+        port: config.get<number>('DATABASE_PORT', 3305),
         username: config.get<string>('DATABASE_USERNAME', 'root'),
         password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
@@ -31,8 +31,8 @@ import { WordModule } from './word/word.module';
       useFactory: (config: ConfigService) => {
         const host = config.get('MONGO_HOST', 'localhost');
         const port = config.get('MONGO_PORT', 27017);
-        const username = config.get('MONGO_USERNAME', '');
-        const password = config.get('MONGO_PASSWORD', '');
+        const username = config.get('MONGO_USERNAME', 'root');
+        const password = config.get('MONGO_PASSWORD', 'test');
 
         return {
           uri: `mongodb://${username}:${password}@${host}:${port}`

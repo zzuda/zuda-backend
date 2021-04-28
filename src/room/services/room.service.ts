@@ -12,6 +12,9 @@ import { RoomMember, RoomMemberDocument } from '../room.schema';
 
 @Injectable()
 export class RoomService {
+  static getRoom(): string {
+      throw new Error('Method not implemented.');
+  }
   constructor(
     @InjectRepository(Room) private readonly roomRepository: Repository<Room>,
     @InjectModel(RoomMember.name) private readonly roomMemberModel: Model<RoomMemberDocument>,
