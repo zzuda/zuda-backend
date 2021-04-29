@@ -31,7 +31,7 @@ import { WordModule } from './word/word.module';
       useFactory: (config: ConfigService) => {
         const host = config.get('MONGO_HOST', 'localhost');
         const port = config.get('MONGO_PORT', 27017);
-        const username = config.get('MONGO_USERNAME', 'root');
+        const username = config.get('MONGO_USERNAME', 'MongoDB');
         const password = config.get('MONGO_PASSWORD', 'test');
 
         return {
