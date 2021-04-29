@@ -18,11 +18,29 @@ export class RoomService {
     private readonly wordService: WordService
   ) {}
 
-  async create(createRoomDto: CreateRoomDTO): Promise<Room> {
-    const inviteCode = await this.wordService.makeRandomWord();
+  private async makeInviteCodeNotConflict(maxTry?: number): Promise<string> {
+    let inviteCode = await this.wordService.makeRandomWord();
 
+    const loopInviteCode = new Array(maxTry || 3).map(async () => {
+      const roomByCode = await this.existsRoomByCode(inviteCode);
+
+      if (!roomByCode) {
+        return;
+      }
+
+      inviteCode = await this.wordService.makeRandomWord();
+    });
+
+    await Promise.all(loopInviteCode);
+
+    return inviteCode;
+  }
+
+  async create(createRoomDto: CreateRoomDTO): Promise<Room> {
     const exists = await this.existsRoomByName(createRoomDto.roomName);
     if (exists) throw new ConflictException(RoomError.ROOM_NAME_USED);
+
+    const inviteCode = await this.makeInviteCodeNotConflict();
 
     const room = new Room();
     room.roomName = createRoomDto.roomName;
