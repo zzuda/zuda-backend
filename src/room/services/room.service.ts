@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Model } from 'mongoose';
@@ -19,19 +24,19 @@ export class RoomService {
   ) {}
 
   private async makeInviteCodeNotConflict(maxTry?: number): Promise<string> {
-    let inviteCode = await this.wordService.makeRandomWord();
+    let inviteCode: string | undefined;
 
-    const loopInviteCode = new Array(maxTry || 3).map(async () => {
+    // eslint-disable-next-line no-restricted-syntax, @typescript-eslint/no-unused-vars
+    for await (const _ of new Array(maxTry || 3).fill('')) {
+      inviteCode = await this.wordService.makeRandomWord();
       const roomByCode = await this.existsRoomByCode(inviteCode);
 
-      if (!roomByCode) {
-        return;
-      }
+      if (!roomByCode) break;
+    }
 
-      inviteCode = await this.wordService.makeRandomWord();
-    });
-
-    await Promise.all(loopInviteCode);
+    if (inviteCode === undefined) {
+      throw new InternalServerErrorException(RoomError.ROOM_FAIL_INVITECODE);
+    }
 
     return inviteCode;
   }
