@@ -71,6 +71,16 @@ export class RoomService {
     return result;
   }
 
+  async updateInviteCode(roomId: number): Promise<Room> {
+    const room = await this.getRoom(roomId);
+    const newInviteCode = await this.makeInviteCodeNotConflict();
+    const result = await this.roomRepository.save({
+      ...room,
+      inviteCode: newInviteCode
+    });
+    return result;
+  }
+
   async delete(roomId: number): Promise<Room> {
     const room = await this.getRoom(roomId);
     await this.roomRepository.remove(room);

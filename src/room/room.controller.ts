@@ -3,12 +3,14 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
+  ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
   ApiUnauthorizedResponse
 } from '@nestjs/swagger';
+import { RoomError } from 'src/shared/errors/room.error';
 import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
 import { UserService } from 'src/user/user.service';
 import { CreateRoomBodyDTO } from './dto/create-room-body.dto';
@@ -83,6 +85,19 @@ export class RoomController {
   ): Promise<Room> {
     const result = await this.roomService.update(roomId, updateRoomDto);
     return result;
+  }
+
+  @Put('/:roomId/code')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiParam({ name: 'roomId', type: Number })
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiUnauthorizedResponse()
+  @ApiInternalServerErrorResponse({ description: JSON.stringify(RoomError.ROOM_FAIL_INVITECODE) })
+  async updateInviteCode(@Param('roomId') roomId: number): Promise<Room> {
+    const room = await this.roomService.updateInviteCode(roomId);
+    return room;
   }
 
   @Delete('/:roomId')

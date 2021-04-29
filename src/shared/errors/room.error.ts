@@ -24,5 +24,9 @@ export const RoomError: ErrorInfo = {
   ROOM_NAME_USED: {
     code: 'room-409-2',
     message: '이미 사용 중인 방 이름입니다.'
+  },
+  ROOM_FAIL_INVITECODE: {
+    code: 'room-500',
+    message: '초대코드 생성을 실패하였습니다. 다시 시도해주세요.'
   }
 };
