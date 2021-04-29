@@ -20,6 +20,7 @@ import { AuthReturn } from 'src/types';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
+import { afterSuccessOAuthController } from './auth.util';
 import { LocalLoginDTO } from './dto/local-login.dto';
 import { LocalRegisterDTO } from './dto/local-register.dto';
 
@@ -57,17 +58,7 @@ export class AuthController {
     const user = await this.userService.findOneByEmail(email);
     user.password = '';
 
-    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
-    res.cookie('refreshtoken', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV', 'production') === 'production',
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
-    });
-
-    return {
-      user,
-      token: this.authService.generateToken(user.uuid).TOKEN
-    };
+    return afterSuccessOAuthController(res, user, this.authService, this.configService);
   }
 
   @Get('/naver')
@@ -81,18 +72,7 @@ export class AuthController {
   naverLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
     const user = req.user as User;
     user.password = '';
-    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
-
-    res.cookie('refreshtoken', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV', 'production') === 'production',
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
-    });
-
-    return {
-      user,
-      token: this.authService.generateToken(user.uuid).TOKEN
-    };
+    return afterSuccessOAuthController(res, user, this.authService, this.configService);
   }
 
   @Get('/google')
@@ -106,18 +86,7 @@ export class AuthController {
   googleLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
     const user = req.user as User;
     user.password = '';
-    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
-
-    res.cookie('refreshtoken', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV', 'production') === 'production',
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
-    });
-
-    return {
-      user,
-      token: this.authService.generateToken(user.uuid).TOKEN
-    };
+    return afterSuccessOAuthController(res, user, this.authService, this.configService);
   }
 
   @Get('/facebook')
@@ -134,18 +103,7 @@ export class AuthController {
   ): AuthReturn {
     const user = req.user as User;
     user.password = '';
-    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
-
-    res.cookie('refreshtoken', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV', 'production') === 'production',
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
-    });
-
-    return {
-      user,
-      token: this.authService.generateToken(user.uuid).TOKEN
-    };
+    return afterSuccessOAuthController(res, user, this.authService, this.configService);
   }
 
   @Get('/kakao')
@@ -159,18 +117,7 @@ export class AuthController {
   kakaoLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
     const user = req.user as User;
     user.password = '';
-    const refreshToken = this.authService.refreshToken(user.uuid).REFRESH_TOKEN;
-
-    res.cookie('refreshtoken', refreshToken, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV', 'production') === 'production',
-      maxAge: this.configService.get('JWT_REFRESH_EXPIRE_TIME', 604800)
-    });
-
-    return {
-      user,
-      token: this.authService.generateToken(user.uuid).TOKEN
-    };
+    return afterSuccessOAuthController(res, user, this.authService, this.configService);
   }
 
   @Post('/token')
