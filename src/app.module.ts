@@ -10,6 +10,7 @@ import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { Word } from './word/word.entity';
 import { WordModule } from './word/word.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { WordModule } from './word/word.module';
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
         host: config.get<string>('DATABASE_HOST', 'localhost'),
-        port: config.get<number>('DATABASE_PORT', 3305),
+        port: config.get<number>('DATABASE_PORT', 3306),
         username: config.get<string>('DATABASE_USERNAME', 'root'),
         password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
@@ -31,8 +32,8 @@ import { WordModule } from './word/word.module';
       useFactory: (config: ConfigService) => {
         const host = config.get('MONGO_HOST', 'localhost');
         const port = config.get('MONGO_PORT', 27017);
-        const username = config.get('MONGO_USERNAME', 'MongoDB');
-        const password = config.get('MONGO_PASSWORD', 'test');
+        const username = config.get('MONGO_USERNAME', '');
+        const password = config.get('MONGO_PASSWORD', '');
 
         return {
           uri: `mongodb://${username}:${password}@${host}:${port}`
@@ -46,7 +47,8 @@ import { WordModule } from './word/word.module';
     UserModule,
     AuthModule,
     RoomModule,
-    WordModule
+    WordModule,
+    FileModule,
   ]
 })
 export class AppModule {}

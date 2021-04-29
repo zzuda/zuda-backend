@@ -18,15 +18,12 @@ import {
   
   
   @Controller('file')
-  export default class FileController {
-    constructor(
-        private readonly roomService: RoomService,
-    ) {}
+  export class FileController {
   
     @Post('upload')
     @UseInterceptors(
       FilesInterceptor('files', 20, {
-       dest: "../../testStoarge"
+       dest: "./testStoarge"
     }))
     uploadFiles(@UploadedFiles() files: File[], ) {
         
