@@ -12,6 +12,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConflictResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse
+} from '@nestjs/swagger';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request, Response } from 'express';
 import { AuthError } from 'src/shared/errors/auth.error';
@@ -25,6 +34,7 @@ import { LocalLoginDTO } from './dto/local-login.dto';
 import { LocalRegisterDTO } from './dto/local-register.dto';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -34,11 +44,17 @@ export class AuthController {
 
   @Get('/me')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
   get(@Req() req: Request): User {
     return req.user as User;
   }
 
   @Post('/register')
+  @ApiOkResponse()
+  @ApiConflictResponse()
+  @ApiBody({ type: LocalRegisterDTO })
   async localRegister(@Body() registerDTO: LocalRegisterDTO): Promise<User> {
     const registeredUser = await this.userService.create(registerDTO);
     registeredUser.password = '';
@@ -46,6 +62,9 @@ export class AuthController {
   }
 
   @Post('/login')
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiBody({ type: LocalLoginDTO })
   async localLogin(
     @Body() loginDTO: LocalLoginDTO,
     @Res({ passthrough: true }) res: Response
@@ -63,12 +82,14 @@ export class AuthController {
 
   @Get('/naver')
   @UseGuards(AuthGuard('naver'))
+  @ApiOkResponse()
   naverLogin(): boolean {
     return true;
   }
 
   @Get('/naver/c')
   @UseGuards(AuthGuard('naver'))
+  @ApiOkResponse()
   naverLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
     const user = req.user as User;
     user.password = '';
@@ -77,12 +98,14 @@ export class AuthController {
 
   @Get('/google')
   @UseGuards(AuthGuard('google'))
+  @ApiOkResponse()
   googleLogin(): boolean {
     return true;
   }
 
   @Get('/google/c')
   @UseGuards(AuthGuard('google'))
+  @ApiOkResponse()
   googleLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
     const user = req.user as User;
     user.password = '';
@@ -91,12 +114,14 @@ export class AuthController {
 
   @Get('/facebook')
   @UseGuards(AuthGuard('facebook'))
+  @ApiOkResponse()
   facebookLogin(): boolean {
     return true;
   }
 
   @Get('/facebook/c')
   @UseGuards(AuthGuard('facebook'))
+  @ApiOkResponse()
   facebookLoginCallback(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
@@ -108,12 +133,14 @@ export class AuthController {
 
   @Get('/kakao')
   @UseGuards(AuthGuard('kakao'))
+  @ApiOkResponse()
   kakaoLogin(): boolean {
     return true;
   }
 
   @Get('/kakao/c')
   @UseGuards(AuthGuard('kakao'))
+  @ApiOkResponse()
   kakaoLoginCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response): AuthReturn {
     const user = req.user as User;
     user.password = '';
@@ -121,6 +148,8 @@ export class AuthController {
   }
 
   @Post('/token')
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
   getToken(@Req() req: Request): string {
     const refreshToken = req.cookies.refreshtoken;
 
@@ -132,6 +161,7 @@ export class AuthController {
   }
 
   @Delete('/logout')
+  @ApiOkResponse()
   logout(@Res() res: Response): boolean {
     res.clearCookie('refreshtoken');
     return true;
