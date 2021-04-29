@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { CreateUserDTO } from 'src/user/dto/create-user.dto';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User } from './user.entity';
@@ -8,12 +7,6 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Post()
-  async create(@Body() createUserDTO: CreateUserDTO): Promise<User> {
-    const result = await this.userService.create(createUserDTO);
-    return result;
-  }
 
   @Get()
   // TODO: 관리자만 사용할 수 있어야 함.
