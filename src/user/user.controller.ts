@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
+import { CreateUserDTO } from 'src/user/dto/create-user.dto';
 import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User } from './user.entity';

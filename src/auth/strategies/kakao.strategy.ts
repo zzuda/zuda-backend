@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-kakao';
-import { CreateUserDTO } from 'src/shared/dto/create-user.dto';
+import { CreateUserDTO } from 'src/user/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
