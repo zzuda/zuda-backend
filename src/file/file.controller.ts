@@ -2,33 +2,39 @@ import {
     Controller, 
     Post, 
     UploadedFiles, 
-    UseInterceptors, 
+    UseInterceptors,
+    Body,
     
   } from '@nestjs/common';
+  import { FileService } from './file.service'
   import { FilesInterceptor } from '@nestjs/platform-express';
-  import { existsSync, mkdirSync } from "fs";
-  import { diskStorage } from "multer";
+  import { FileBodyDTO } from "./dto/upload-file-body.dto"
+  
 
-  import { RoomService } from "../room/services/room.service"
 
-//   import { multerOptions } from './multerConfig/index';
-
-//   const filePath = () =>
   
   
   
   @Controller('file')
   export class FileController {
+    constructor(
+      private readonly fileService: FileService,
+    ) {}
   
     @Post('upload')
     @UseInterceptors(
       FilesInterceptor('files', 20, {
-       dest: "./testStoarge"
+       dest: "./fileStorage/temp"
     }))
-    uploadFiles(@UploadedFiles() files: File[], ) {
-        
+    uploadFiles(@UploadedFiles() files: File[], @Body() fileBodyDTO: FileBodyDTO) {
+      const result = this.fileService.moveFile(files, fileBodyDTO)
+      
+      
+
+        console.log(fileBodyDTO)  
         console.log(files);
-        return 'method doned'
+        return result;
+  
       }   
   }
   
