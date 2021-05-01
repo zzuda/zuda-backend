@@ -26,13 +26,13 @@ import {
       FilesInterceptor('files', 20, {
        dest: "./fileStorage/temp"
     }))
-    uploadFiles(@UploadedFiles() files: File[], @Body() fileBodyDTO: FileBodyDTO) {
+    uploadFiles(@UploadedFiles() files: Express.Multer.File[] , @Body() fileBodyDTO: FileBodyDTO) {
       const result = this.fileService.moveFile(files, fileBodyDTO)
-      
+      console.log(files[0].filename);
       
 
-        console.log(fileBodyDTO)  
-        console.log(files);
+        // console.log(fileBodyDTO)  
+        // console.log(files);
         return result;
   
       }   

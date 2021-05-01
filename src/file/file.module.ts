@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { FileController } from '../file/file.controller'
-// import { FileService } from '../file/file.service';
+import { FileService } from '../file/file.service';
 
 @Module({
   imports: [
@@ -12,10 +12,10 @@ import { FileController } from '../file/file.controller'
         }),
       }),
   ],
-//   providers: [
-//     FileService
-//   ],
+  providers: [
+    FileService
+  ],
   exports: [MulterModule],
-  controllers: [FileController]
+  controllers: [FileController],
 })
 export class FileModule {}
