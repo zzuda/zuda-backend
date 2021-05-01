@@ -1,8 +1,6 @@
-import { IsNumberString, IsObject } from 'class-validator'
+import { IsNumberString } from 'class-validator'
 
 export class FileBodyDTO{
-    
     @IsNumberString()
     roomID!: number;
-
 }

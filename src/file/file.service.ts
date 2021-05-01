@@ -1,50 +1,50 @@
 import { Injectable } from '@nestjs/common';
+import { existsSync, mkdirSync, rename, rmdir } from "fs";
+
+import { Express } from 'express'
 import { FileBodyDTO } from './dto/upload-file-body.dto';
 
-import { existsSync, mkdirSync, /*rimraf,*/ rename } from "fs";
-import { Express } from "express"
 
 @Injectable()
 export class FileService{
+  async moveFile(files: Express.Multer.File[], fileBody: FileBodyDTO): Promise<string>{
 
-    async moveFile(files: Express.Multer.File[], fileBody : FileBodyDTO){
-        
-        const roomID : number = fileBody.roomID
-        const roomStorage: string = 'fileStorage\\' + roomID;
-       
-        const recievedFiles: string[] = [];
+    const fileStorage = 'fileStorage';
+    const { roomID } = fileBody;
+    const backSlash = '\\';
 
-        console.log("룸 ID: ");
-        console.log(roomID);
+    const roomStorage: string = fileStorage + backSlash + roomID;
 
-        console.log(" 파일경로:")
-        console.log(roomStorage);
+    if(!existsSync(roomStorage)){ 
+      mkdirSync(roomStorage); 
+    }
 
-        console.log("파일 배열:");
-        console.log(files)
+    // eslint-disable-next-line no-restricted-syntax
+    for(const item in files){
+      if({}.hasOwnProperty.call(files, item)){
+        const recievedFiles = files[item].path;
+        const moveToStorage = `${ roomStorage }\\${ files[item].filename }`;
 
-        if(!existsSync(roomStorage)){
-            mkdirSync(roomStorage);
-        }
-        
-        console.log("--------------------------- 0 번 index");
-        console.log(files[0].filename);
-        console.log("\n");
-
-        for( var item in files){
-            
-            rename(files[item].path , roomStorage +"\\"+ files[item].filename, function (err){
-                if(err) throw err 
-                      
-            });
-        }
-        
-
-        //have to make method of move files (temp -> roomStorage with roomID) 
+        rename(recievedFiles, moveToStorage, (err)=> {
+          if(err) throw err; 
+      });
+      }   
+    }
+      return "파일이 업로드 되었습니다";  
     }
     
-    //Delete Storage directory of rooomID when room Destroyed
-    async deleteRoomStorage(){
+    async deleteRoomStorage(fileBody: FileBodyDTO): Promise<string>{
 
-    }
+    const fileStorage = 'fileStorage';
+    const { roomID } = fileBody;
+    const backSlash = '\\';
+      
+      rmdir(fileStorage + backSlash + roomID, { recursive: true }, (err) => {
+        if (err) {
+            throw err;
+        }
+    });
+
+    return "file Storage Removed";
+  }
 }
