@@ -5,6 +5,7 @@ import {
     UseInterceptors,
     Body,   
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config'
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express'
 
@@ -15,12 +16,13 @@ import { FileBodyDTO } from "./dto/upload-file-body.dto"
 export class FileController {
   constructor(
     private readonly fileService: FileService,
+    private readonly configService: ConfigService
   ) {}
 
   @Post('upload')
   @UseInterceptors(
     FilesInterceptor('files', 20, {
-      dest: "./fileStorage/temp"
+      dest: "./fileStorage/temp",
   }))
   uploadFiles(@UploadedFiles() files: Express.Multer.File[] , @Body() fileBodyDTO: FileBodyDTO): Promise<string> {
     const result = this.fileService.moveFile(files, fileBodyDTO)
@@ -29,8 +31,15 @@ export class FileController {
   }   
 
   @Post('delete')
-  DeleteDir(@Body() roomID: FileBodyDTO): Promise<string>{
-    const result = this.fileService.deleteRoomStorage(roomID)
+  deleteFile(@Body() FileBody:FileBodyDTO ): Promise<string>{
+   const result = this.fileService.deleteFile(FileBody)
+
+    return result;
+  }
+
+  @Post('deleteStorage')
+  deleteDir(@Body() roomID: FileBodyDTO): Promise<string>{
+    const result = this.fileService.removeRoomStorage(roomID)
 
     return result;
   }
