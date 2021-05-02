@@ -1,11 +1,10 @@
-import { IsNumberString, IsOptional, IsString } from 'class-validator'
+import { IsNumberString, IsOptional, IsString } from 'class-validator';
 
-export class FileBodyDTO{
-    @IsNumberString()
-    roomID!: number;
+export class FileBodyDTO {
+  @IsNumberString()
+  roomID!: number;
 
-    @IsString()
-    @IsOptional()
-    fileName?: string;
-
+  @IsString()
+  @IsOptional()
+  fileName?: string;
 }
