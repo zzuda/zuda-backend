@@ -25,7 +25,7 @@ export class FileService{
     const roomStorage: string = fileStorage + backSlash + roomID;
 
     if(!existsSync(fileStorage)) mkdirSync(fileStorage);
-      if(!existsSync(tempStorage)) mkdirSync(tempStorage); 
+      if(!existsSync(tempStorage)) mkdirSync(tempStorage);
         if(!existsSync(roomStorage)) mkdirSync(roomStorage)
 
     if(files == null)

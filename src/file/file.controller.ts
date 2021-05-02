@@ -1,9 +1,9 @@
-import { 
-    Controller, 
-    Post, 
-    UploadedFiles, 
+import{
+    Controller,
+    Post,
+    UploadedFiles,
     UseInterceptors,
-    Body,   
+    Body,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config'
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -28,7 +28,7 @@ export class FileController {
     const result = this.fileService.moveFile(files, fileBodyDTO)
     
     return result;
-  }   
+  }
 
   @Post('delete')
   deleteFile(@Body() FileBody:FileBodyDTO ): Promise<string>{
