@@ -48,7 +48,7 @@ export class FileService{
          
         rename(recievedFiles, moveToStorage, (err)=> {
           if(err) throw new ConflictException(FileError.FILE_UPLOAD_FAILED);
-      });   
+      });
 
     }
   }
