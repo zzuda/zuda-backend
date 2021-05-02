@@ -14,5 +14,10 @@ export const FileError: ErrorInfo = {
   FILE_STORAGE_NOT_FOUND:{
     code: 'file-404',
     message: '해당 roomID를 가진 저장 스토리지가 존재하지 않습니다'
+  },
+
+  NULL_UPLOAD:{
+    code: 'file-406',
+    message: '업로드된 파일이 없습니다'
   }
 };

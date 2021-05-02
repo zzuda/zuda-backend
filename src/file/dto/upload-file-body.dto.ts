@@ -8,7 +8,4 @@ export class FileBodyDTO{
     @IsOptional()
     fileName?: string;
 
-    @IsString()
-    @IsOptional()
-    Files?: []
 }

@@ -27,6 +27,9 @@ export class FileService{
     if(!existsSync(fileStorage)) mkdirSync(fileStorage);
       if(!existsSync(tempStorage)) mkdirSync(tempStorage); 
         if(!existsSync(roomStorage)) mkdirSync(roomStorage)
+
+    if(files == null)
+      throw new NotAcceptableException(FileError.NULL_UPLOAD)
       
     // eslint-disable-next-line no-restricted-syntax
     for(const item in files){
