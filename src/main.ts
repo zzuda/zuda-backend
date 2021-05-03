@@ -14,7 +14,8 @@ async function bootstrap() {
   const corsHost = config.get<string>('CORS_HOST', 'http://localhost:3000');
 
   app.enableCors({
-    origin: corsHost
+    origin: corsHost,
+    credentials: true
   });
   app.use(cookieParser());
   app.use(helmet());
