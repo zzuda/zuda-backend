@@ -1,8 +1,8 @@
 import {
   Injectable,
-  ConflictException,
+  NotFoundException,
   BadRequestException,
-  NotFoundException
+  InternalServerErrorException
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { existsSync, mkdirSync, rename, rmdir } from 'fs';
@@ -15,7 +15,7 @@ import { FileError } from '../shared/errors/file.error';
 export class FileService {
   constructor(private readonly configService: ConfigService) {}
 
-  async moveFile(files: Express.Multer.File[], fileBody: FileBodyDTO): Promise<string> {
+  moveFile(files: Express.Multer.File[], fileBody: FileBodyDTO): string {
     const filePath = 'fileStorage';
     const { roomID } = fileBody;
     const backSlash = '\\';
@@ -48,25 +48,25 @@ export class FileService {
           throw new BadRequestException(FileError.FILE_CAPACITY_EXCEEDED);
         }
         rename(recievedFiles, moveToStorage, (err) => {
-          if (err) throw new ConflictException(FileError.FILE_UPLOAD_FAILED);
+          if (err) throw new InternalServerErrorException(FileError.FILE_UPLOAD_FAILED);
         });
       }
     }
     return '파일 업로드 완료';
   }
 
-  async deleteFile(fileBody: FileBodyDTO): Promise<string> {
+  deleteFile(fileBody: FileBodyDTO): string {
     const fileStorage = 'fileStorage';
     const { fileName, roomID } = fileBody;
     const backSlash = '\\';
 
     rmdir(fileStorage + backSlash + roomID + backSlash + fileName, { recursive: true }, (err) => {
-      if (err) throw err;
+      if (err) throw new InternalServerErrorException(FileError.FILE_DELETION_FAILED);
     });
     return '파일이 삭제되었습니다';
   }
 
-  async removeRoomStorage(fileBody: FileBodyDTO): Promise<string> {
+  removeRoomStorage(fileBody: FileBodyDTO): string {
     const fileStorage = 'fileStorage';
     const { roomID } = fileBody;
     const backSlash = '\\';
@@ -75,7 +75,7 @@ export class FileService {
       throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
 
     rmdir(fileStorage + backSlash + roomID, { recursive: true }, (err) => {
-      if (err) throw err;
+      if (err) throw new InternalServerErrorException(FileError.FILE_STORAGE_DELETION_FAILED);
     });
     return 'file Storage Removed';
   }
