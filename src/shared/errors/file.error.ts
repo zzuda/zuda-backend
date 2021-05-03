@@ -19,5 +19,15 @@ export const FileError: ErrorInfo = {
   NULL_UPLOAD: {
     code: 'file-400',
     message: '업로드된 파일이 없습니다'
+  },
+
+  FILE_STORAGE_DELETION_FAILED: {
+    code: 'file-500',
+    message: '파일 스토리지 삭제를 실패하였습니다'
+  },
+
+  FILE_DELETION_FAILED: {
+    code: 'file-500',
+    message: '파일 삭제를 실패하였습니다'
   }
 };
