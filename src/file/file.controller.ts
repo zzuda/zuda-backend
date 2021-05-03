@@ -15,25 +15,25 @@ export class FileController {
       dest: './fileStorage/temp'
     })
   )
-  async uploadFiles(
+  uploadFiles(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() fileBodyDTO: FileBodyDTO
-  ): Promise<string> {
-    const result = await this.fileService.moveFile(files, fileBodyDTO);
+  ): string {
+    const result = this.fileService.moveFile(files, fileBodyDTO);
 
     return result;
   }
 
   @Post('delete')
-  deleteFile(@Body() FileBody: FileBodyDTO): Promise<string> {
+  deleteFile(@Body() FileBody: FileBodyDTO): string {
     const result = this.fileService.deleteFile(FileBody);
 
     return result;
   }
 
   @Post('deleteStorage')
-  async deleteDir(@Body() roomID: FileBodyDTO): Promise<string> {
-    const result = await this.fileService.removeRoomStorage(roomID);
+  deleteDir(@Body() roomID: FileBodyDTO): string {
+    const result = this.fileService.removeRoomStorage(roomID);
 
     return result;
   }
