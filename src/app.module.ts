@@ -10,6 +10,7 @@ import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { Word } from './word/word.entity';
 import { WordModule } from './word/word.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { WordModule } from './word/word.module';
     UserModule,
     AuthModule,
     RoomModule,
-    WordModule
+    WordModule,
+    FileModule,
   ]
 })
 export class AppModule {}
