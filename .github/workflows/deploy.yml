@@ -52,7 +52,7 @@ jobs:
 
   deploy:
     needs: [lint, build]
-    runs-on: [self-hosted, ubuntu-18.04]
+    runs-on: [self-hosted, linux]
     steps:
       - name: Run docker compose
         run: docker-compose up -d
