@@ -54,6 +54,8 @@ jobs:
     needs: [lint, build]
     runs-on: [self-hosted, linux]
     steps:
+      - uses: actions/checkout@master
+   
       - name: Run docker compose
         run: docker-compose up -d
         env:
