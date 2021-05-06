@@ -29,11 +29,11 @@ jobs:
       - run: yarn
       - run: yarn build
       - name: Branch tag
-          id: branch_tag
-          run: |
-            echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
+        id: branch_tag
+        run: |
+          echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
       - run: docker login ghcr.io -u ${{ secrets.GH_USER }}
           -p ${{ secrets.GH_TOKEN }}
-      - run: docker build -t ghcr.io/zzuda/zuda-backend:latest 
-            -t ghcr.io/zzuda/zuda-backend:${{ steps.branch_tag.outputs.TAG }} .
+      - run: docker build -t ghcr.io/zzuda/zuda-backend:latest
+          -t ghcr.io/zzuda/zuda-backend:${{ steps.branch_tag.outputs.TAG }} .
       - run: docker push ghcr.io/zzuda/zuda-backend --all-tags
