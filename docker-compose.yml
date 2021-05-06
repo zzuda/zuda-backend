@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  zuda-backend:
+  app:
     container_name: zuda-backend
     image: ghcr.io/zzuda/zuda-backend:latest
     restart: always
@@ -13,6 +13,20 @@ services:
       - '.env'
     environment:
       TZ: Asia/Seoul
+    networks:
+      - zuda_net
+  mongodb:
+    container_name: zuda-mongo
+    image: mongo:4.4
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - './mongo/data:/data/db'
+    environment:
+      TZ: Asia/Seoul
+    networks:
+      - zuda_net
   mariadb:
     container_name: zuda-db
     image: mariadb:10.5
@@ -24,6 +38,8 @@ services:
       - './db/conf.d:/etc/mysql/conf.d'
     environment:
       TZ: Asia/Seoul
+    networks:
+      - zuda_net
   redis:
     container_name: zuda-redis
     image: redis:6.0
@@ -31,3 +47,8 @@ services:
       - '6379:6379'
     environment:
       TZ: Asia/Seoul
+    networks:
+      - zuda_net
+
+networks:
+  zuda_net:
