@@ -3,7 +3,7 @@ version: '3'
 services:
   zuda-backend:
     container_name: zuda-backend
-    image: zuda-backend
+    image: ghcr.io/zzuda/zuda-backend:latest
     restart: always
     ports:
       - '2018:8080'
