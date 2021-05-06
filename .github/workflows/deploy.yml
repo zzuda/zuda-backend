@@ -26,8 +26,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
-      - run: yarn
-      - run: yarn build
       - name: Branch tag
         id: branch_tag
         run: |
