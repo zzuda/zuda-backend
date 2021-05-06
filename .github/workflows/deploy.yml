@@ -5,6 +5,9 @@ on:
   release:
     types: [published]
 
+env:
+  IMAGE: ghcr.io/zzuda/zuda-backend
+
 jobs:
   lint:
     runs-on: ubuntu-18.04
@@ -41,8 +44,8 @@ jobs:
           -p ${{ secrets.GH_TOKEN }}
 
       - name: Build dockerfile
-        run: docker build -t ghcr.io/zzuda/zuda-backend:latest
-          -t ghcr.io/zzuda/zuda-backend:${{ steps.branch_tag.outputs.TAG }} .
+        run: docker build -t ${{ env.IMAGE }}:latest
+          -t ${{ env.IMAGE }}:${{ steps.branch_tag.outputs.TAG }} .
 
       - name: Push docker image
-        run: docker push ghcr.io/zzuda/zuda-backend --all-tags
+        run: docker push ${{ env.IMAGE }} --all-tags
