@@ -1,4 +1,4 @@
-# zuda-backend [![CodeFactor](https://www.codefactor.io/repository/github/zzuda/zuda-backend/badge)](https://www.codefactor.io/repository/github/zzuda/zuda-backend)
+# zuda-backend [![CodeFactor](https://www.codefactor.io/repository/github/zzuda/zuda-backend/badge)](https://www.codefactor.io/repository/github/zzuda/zuda-backend) [![zuda-backend-deploy](https://github.com/zzuda/zuda-backend/actions/workflows/deploy.yml/badge.svg)](https://github.com/zzuda/zuda-backend/actions/workflows/deploy.yml)
 
 > 너에게 주다. 과제제출, 출석체크 등 학습 보조 플랫폼
 
