@@ -9,12 +9,15 @@ services:
       - '2018:8080'
     volumes:
       - './fileStorage:/workspace/fileStorage'
-    env_file:
-      - '.env'
     environment:
       TZ: Asia/Seoul
     networks:
       - zuda_net
+    depends_on:
+      - mariadb
+      - mongodb
+      - redis
+
   mongodb:
     container_name: zuda-mongo
     image: mongo:4.4
@@ -27,6 +30,7 @@ services:
       TZ: Asia/Seoul
     networks:
       - zuda_net
+
   mariadb:
     container_name: zuda-db
     image: mariadb:10.5
@@ -40,6 +44,7 @@ services:
       TZ: Asia/Seoul
     networks:
       - zuda_net
+
   redis:
     container_name: zuda-redis
     image: redis:6.0
