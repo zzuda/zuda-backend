@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
+
       - name: Cache node modules
         uses: actions/cache@v2
         with:
@@ -18,8 +19,12 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: yarn
-      - run: yarn lint
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run eslint
+        run: yarn lint
 
   build:
     needs: lint
@@ -30,8 +35,14 @@ jobs:
         id: branch_tag
         run: |
           echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
-      - run: docker login ghcr.io -u ${{ secrets.GH_USER }}
+
+      - name: Login docker ghcr
+        run: docker login ghcr.io -u ${{ secrets.GH_USER }}
           -p ${{ secrets.GH_TOKEN }}
-      - run: docker build -t ghcr.io/zzuda/zuda-backend:latest
+
+      - name: Build dockerfile
+        run: docker build -t ghcr.io/zzuda/zuda-backend:latest
           -t ghcr.io/zzuda/zuda-backend:${{ steps.branch_tag.outputs.TAG }} .
-      - run: docker push ghcr.io/zzuda/zuda-backend --all-tags
+
+      - name: Push docker image
+        run: docker push ghcr.io/zzuda/zuda-backend --all-tags
