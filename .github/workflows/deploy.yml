@@ -56,3 +56,30 @@ jobs:
     steps:
       - name: Run docker compose
         run: docker-compose up -d
+        env:
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_DB: ${{ secrets.DATABASE_DB }}
+          MONGO_HOST: ${{ secrets.MONGO_HOST }}
+          MONGO_PORT: ${{ secrets.MONGO_PORT }}
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          CORS_HOST: ${{ secrets.CORS_HOST }}
+          SALT_ROUND: ${{ secrets.SALT_ROUND }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          JWT_SECRET_EXPIRE_TIME: ${{ secrets.JWT_SECRET_EXPIRE_TIME }}
+          JWT_REFRESH_KEY: ${{ secrets.JWT_REFRESH_KEY }}
+          JWT_REFRESH_EXPIRE_TIME: ${{ secrets.JWT_REFRESH_EXPIRE_TIME }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
+          NAVER_CALLBACK: http://localhost:8080/auth/naver/c
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          GOOGLE_CALLBACK: http://localhost:8080/auth/google/c
+          FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+          FACEBOOK_SECRET: ${{ secrets.FACEBOOK_SECRET }}
+          FACEBOOK_CALLBACK: http://localhost:8080/auth/facebook/c
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_SECRET: ${{ secrets.KAKAO_SECRET }}
+          KAKAO_CALLBACK: http://localhost:8080/auth/kakao/c
