@@ -11,9 +11,7 @@ export class FileController {
 
   @Post('upload')
   @UseInterceptors(
-    FilesInterceptor('files', 20, {
-      dest: './fileStorage/temp'
-    })
+    FilesInterceptor('files', 20)
   )
   uploadFiles(
     @UploadedFiles() files: Express.Multer.File[],
