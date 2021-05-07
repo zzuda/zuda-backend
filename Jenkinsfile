@@ -1,7 +1,5 @@
 pipeline {
-    tools {
-        nodejs 'nodejs12'
-    }
+    agent { docker 'node:12' }
 
     environment {
         CI = 'true'
