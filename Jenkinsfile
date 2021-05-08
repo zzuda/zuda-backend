@@ -8,7 +8,7 @@ pipeline {
     }
 
     stages {
-        stages('docker test') {
+        stage('docker test') {
             steps { 
                 sh 'docker help'
             }
