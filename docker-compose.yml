@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  app:
+    container_name: zuda-backend
+    image: ghcr.io/zzuda/zuda-backend:latest
+    restart: always
+    ports:
+      - '2018:8080'
+    volumes:
+      - '${BASE_PATH}/fileStorage:/workspace/fileStorage'
+    environment:
+      - DATABASE_HOST
+      - DATABASE_PORT
+      - DATABASE_USERNAME
+      - DATABASE_PASSWORD
+      - DATABASE_DB
+      - MONGO_HOST
+      - MONGO_PORT
+      - MONGO_USERNAME
+      - MONGO_PASSWORD
+      - CORS_HOST
+      - SALT_ROUND
+      - JWT_SECRET_KEY
+      - JWT_SECRET_EXPIRE_TIME
+      - JWT_REFRESH_KEY
+      - JWT_REFRESH_EXPIRE_TIME
+      - NAVER_CLIENT_ID
+      - NAVER_SECRET
+      - NAVER_CALLBACK
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_SECRET
+      - GOOGLE_CALLBACK
+      - FACEBOOK_CLIENT_ID
+      - FACEBOOK_SECRET
+      - FACEBOOK_CALLBACK
+      - KAKAO_CLIENT_ID
+      - KAKAO_SECRET
+      - KAKAO_CALLBACK
+      - TZ=Asia/Seoul
+    networks:
+      - zuda_net
+    depends_on:
+      - mariadb
+      - mongodb
+
+  mongodb:
+    container_name: zuda-mongo
+    image: mongo:4.4
+    restart: always
+    volumes:
+      - '${BASE_PATH}/mongo/data:/data/db'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+      - TZ=Asia/Seoul
+    networks:
+      - zuda_net
+
+  mariadb:
+    container_name: zuda-db
+    image: mariadb:10.5
+    restart: always
+    volumes:
+      - '${BASE_PATH}/db/data:/var/lib/mysql'
+      - '${BASE_PATH}/db/conf.d:/etc/mysql/conf.d'
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - TZ=Asia/Seoul
+    networks:
+      - zuda_net
+
+networks:
+  zuda_net:
