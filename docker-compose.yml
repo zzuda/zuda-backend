@@ -8,7 +8,7 @@ services:
     ports:
       - '2018:8080'
     volumes:
-      - './fileStorage:/workspace/fileStorage'
+      - '${BASE_PATH}/fileStorage:/workspace/fileStorage'
     environment:
       TZ: Asia/Seoul
     networks:
@@ -24,7 +24,7 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - './mongo/data:/data/db'
+      - '${BASE_PATH}/mongo/data:/data/db'
     environment:
       TZ: Asia/Seoul
     networks:
@@ -37,8 +37,8 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - './db/data:/var/lib/mysql'
-      - './db/conf.d:/etc/mysql/conf.d'
+      - '${BASE_PATH}/db/data:/var/lib/mysql'
+      - '${BASE_PATH}/db/conf.d:/etc/mysql/conf.d'
     environment:
       TZ: Asia/Seoul
     networks:
