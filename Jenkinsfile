@@ -33,7 +33,7 @@ pipeline {
             }
 
             steps {
-                sh 'docker login ghcr.io -u ${GH_USERNAME} -p ${GH_TOKEN}'
+                sh 'echo ${GH_TOKEN} | docker login ghcr.io -u ${GH_USERNAME} --password-stdin'
                 sh 'docker build -t ${IMAGE}:latest -t ${IMAGE}:${TAG} .'
                 sh 'docker push ${IMAGE}'
             }
