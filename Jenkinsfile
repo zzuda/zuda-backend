@@ -35,7 +35,7 @@ pipeline {
             steps {
                 sh 'docker login ghcr.io -u ${GH_USERNAME} -p ${GH_TOKEN}'
                 sh 'docker build -t ${IMAGE}:latest -t ${IMAGE}:${TAG} .'
-                sh 'docker push ${IMAGE} --all-tags'
+                sh 'docker push ${IMAGE}'
             }
         }
 
