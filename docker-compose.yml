@@ -21,8 +21,6 @@ services:
     container_name: zuda-mongo
     image: mongo:4.4
     restart: always
-    ports:
-      - '27017:27017'
     volumes:
       - '${BASE_PATH}/mongo/data:/data/db'
     environment:
@@ -34,8 +32,6 @@ services:
     container_name: zuda-db
     image: mariadb:10.5
     restart: always
-    ports:
-      - '3306:3306'
     volumes:
       - '${BASE_PATH}/db/data:/var/lib/mysql'
       - '${BASE_PATH}/db/conf.d:/etc/mysql/conf.d'
