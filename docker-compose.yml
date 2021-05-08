@@ -16,7 +16,6 @@ services:
     depends_on:
       - mariadb
       - mongodb
-      - redis
 
   mongodb:
     container_name: zuda-mongo
@@ -40,16 +39,6 @@ services:
     volumes:
       - './db/data:/var/lib/mysql'
       - './db/conf.d:/etc/mysql/conf.d'
-    environment:
-      TZ: Asia/Seoul
-    networks:
-      - zuda_net
-
-  redis:
-    container_name: zuda-redis
-    image: redis:6.0
-    ports:
-      - '6379:6379'
     environment:
       TZ: Asia/Seoul
     networks:
