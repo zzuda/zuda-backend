@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         CI = 'true'
+        IMAGE = 'ghcr.io/zzuda/zuda-backend'
+        CONTAINER_NAME = 'zuda-backend'
     }
 
     stages {
@@ -20,8 +22,28 @@ pipeline {
         }
 
         stage('Build') {
+            environment {
+                TAG = sh(returnStdout: true, script: "git tag --sort version:refname | tail -1").trim()
+                GH_USERNAME = credentials('GH_USERNAME')
+                GH_TOKEN = credentials('GH_TOKEN')
+            }
+
             steps {
-                echo 'Test'
+                sh 'docker login ghcr.io -u ${GH_USERNAME} -p ${GH_TOKEN}'
+                sh 'docker build -t ${IMAGE}:latest -t ${IMAGE}:${TAG} .'
+                sh 'docker push ${IMAGE} --all-tags'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh 'docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop ${CONTAINER_NAME} && docker rm ${CONTAINER_NAME} || true'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker-compose up -d'
             }
         }
     }
