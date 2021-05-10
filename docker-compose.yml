@@ -20,6 +20,7 @@ services:
       - MONGO_USERNAME
       - MONGO_PASSWORD
       - CORS_HOST
+      - MAX_SIZE_PER_FILE
       - SALT_ROUND
       - JWT_SECRET_KEY
       - JWT_SECRET_EXPIRE_TIME
