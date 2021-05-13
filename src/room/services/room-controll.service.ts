@@ -6,6 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { RoomMemberService } from './room-member.service';
 import { RoomService } from './room.service';
 
+interface JoinRoomOption {
+  readonly name?: string;
+  readonly userId?: string;
+}
+
 @Injectable()
 export class RoomControllService {
   constructor(
@@ -17,37 +22,45 @@ export class RoomControllService {
     return uuidv4();
   }
 
-  async joinRoom(roomId: number, userId?: string): Promise<RoomInteractReturn> {
+  async joinRoom(roomId: number, options: JoinRoomOption): Promise<RoomInteractReturn> {
     const isFull = await this.roomMemberService.isRoomFull(roomId);
     if (isFull) throw new WsException(RoomError.ROOM_IS_FULL);
 
-    const guestUserId = userId || this.generateGuestId();
+    const { name, userId } = options;
+
+    const guestOrUserId = userId || this.generateGuestId();
     const roomMember = await this.roomMemberService.getRoomMember(roomId);
 
-    if (roomMember.members.includes(guestUserId))
-      throw new WsException(RoomError.GUEST_ALREADY_JOIN);
+    const existsMember = roomMember.members.find((user) => user.id === guestOrUserId);
+    const existsMemberByName = roomMember.members.find((user) => user.name === name);
+    if (existsMember || existsMemberByName) throw new WsException(RoomError.GUEST_ALREADY_JOIN);
 
-    roomMember.members.push(guestUserId);
+    roomMember.members.push({
+      id: guestOrUserId,
+      owner: userId !== undefined,
+      name
+    });
     await roomMember.save();
 
     const room = await this.roomService.getRoom(roomId);
 
     return {
-      guestId: guestUserId,
+      id: guestOrUserId,
       roomInfo: room
     };
   }
 
-  async quitRoom(roomId: number, userId: string): Promise<void> {
+  async quitRoom(roomId: number, guestId: string): Promise<void> {
     const exists = await this.roomService.existsRoom(roomId);
 
     if (!exists) throw new WsException(RoomError.ROOM_NOT_FOUND);
 
     const roomMember = await this.roomMemberService.getRoomMember(roomId);
 
-    if (!roomMember.members.includes(userId)) throw new WsException(RoomError.GUEST_NOT_FOUND);
+    const existsMember = roomMember.members.find((user) => user.id === guestId);
+    if (!existsMember) throw new WsException(RoomError.GUEST_NOT_FOUND);
 
-    const guestIndex = roomMember.members.findIndex((i) => i === userId);
+    const guestIndex = roomMember.members.findIndex((i) => i.id === guestId);
 
     roomMember.members.splice(guestIndex, 1);
     await roomMember.save();
