@@ -57,10 +57,8 @@ export class RoomControllService {
 
     const roomMember = await this.roomMemberService.getRoomMember(roomId);
 
-    const existsMember = roomMember.members.find((user) => user.id === guestId);
-    if (!existsMember) throw new WsException(RoomError.GUEST_NOT_FOUND);
-
     const guestIndex = roomMember.members.findIndex((i) => i.id === guestId);
+    if (guestIndex === -1) throw new WsException(RoomError.GUEST_NOT_FOUND);
 
     roomMember.members.splice(guestIndex, 1);
     await roomMember.save();
