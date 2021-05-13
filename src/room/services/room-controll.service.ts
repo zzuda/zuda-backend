@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { RoomError } from 'src/shared/errors/room.error';
 import { RoomInteractReturn } from 'src/types';
-import { v4 as uuidv4 } from 'uuid';
 import { RoomMemberService } from './room-member.service';
 import { RoomService } from './room.service';
 
@@ -10,6 +9,7 @@ interface JoinRoomOption {
   readonly name?: string;
   readonly userId?: string;
 }
+const WORD_DATA = 'abcdefghijklmnopqrstuvwxyz1234567890';
 
 @Injectable()
 export class RoomControllService {
@@ -19,7 +19,12 @@ export class RoomControllService {
   ) {}
 
   private generateGuestId(): string {
-    return uuidv4();
+    let result = '';
+    for (let i = 0; i < 8; i += 1) {
+      const rand = Math.floor(Math.random() * WORD_DATA.length);
+      result += WORD_DATA[rand];
+    }
+    return result;
   }
 
   async joinRoom(roomId: number, options: JoinRoomOption): Promise<RoomInteractReturn> {
