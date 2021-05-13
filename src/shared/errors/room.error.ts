@@ -28,5 +28,9 @@ export const RoomError: ErrorInfo = {
   ROOM_FAIL_INVITECODE: {
     code: 'room-500',
     message: '초대코드 생성을 실패하였습니다. 다시 시도해주세요.'
+  },
+  OWNER_CAN_NOT_QUIT: {
+    code: 'room-400',
+    message: '방장은 방을 나갈 수 없습니다. 방 삭제를 이용해주세요.'
   }
 };

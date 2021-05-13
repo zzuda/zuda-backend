@@ -60,6 +60,9 @@ export class RoomControllService {
     const guestIndex = roomMember.members.findIndex((i) => i.id === guestId);
     if (guestIndex === -1) throw new WsException(RoomError.GUEST_NOT_FOUND);
 
+    const guest = roomMember.members[guestIndex];
+    if (guest.owner) throw new WsException(RoomError.OWNER_CAN_NOT_QUIT);
+
     roomMember.members.splice(guestIndex, 1);
     await roomMember.save();
   }
