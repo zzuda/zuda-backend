@@ -17,6 +17,7 @@ import { CreateRoomBodyDTO } from './dto/create-room-body.dto';
 import { CreateRoomDTO } from './dto/create-room.dto';
 import { UpdateRoomDTO } from './dto/update-room.dto';
 import { Room } from './room.entity';
+import { RoomControllService } from './services/room-controll.service';
 import { RoomMemberService } from './services/room-member.service';
 import { RoomService } from './services/room.service';
 
@@ -26,6 +27,7 @@ export class RoomController {
   constructor(
     private readonly roomService: RoomService,
     private readonly roomMemberService: RoomMemberService,
+    private readonly roomControllService: RoomControllService,
     private readonly userService: UserService
   ) {}
 
@@ -46,6 +48,7 @@ export class RoomController {
     createRoomDto.maxPeople = createRoomBodyDto.maxPeople;
 
     const room = await this.roomService.create(createRoomDto);
+    await this.roomControllService.joinRoom(room.roomId, room.owner.uuid);
     return room;
   }
 
