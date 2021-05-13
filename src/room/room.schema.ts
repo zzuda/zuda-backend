@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { MemberData } from 'src/types/member-data';
 
 @Schema({
   versionKey: false
@@ -9,7 +10,7 @@ export class RoomMember {
   roomId!: number;
 
   @Prop()
-  members!: string[];
+  members!: MemberData[];
 }
 
 export type RoomMemberDocument = RoomMember & Document;
