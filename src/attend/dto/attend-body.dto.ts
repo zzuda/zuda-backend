@@ -1,10 +1,10 @@
-import { IsNumberString, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class AttendBodyDTO {
-  @IsNumberString()
+  @IsNumber()
   roomID!: number;
 
-  @IsNumberString()
+  @IsNumber()
   randomCount!: number;
 
   @IsString()

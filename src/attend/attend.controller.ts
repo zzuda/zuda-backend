@@ -9,7 +9,6 @@ export class AttendController {
     constructor( private readonly attendService: AttendService ) {}
 
   @Post('create')
-
   createAttendWord(@Body() attendBodyDTO: AttendBodyDTO): string{
     const result = this.attendService.createWord(attendBodyDTO)
 
@@ -18,6 +17,6 @@ export class AttendController {
 
   @Get()
   findAll(): string {
-    return 'This action returns all cats';
+    return 'This is test action lmao';
   }
 }

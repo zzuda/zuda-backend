@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { AttendError } from 'src/shared/errors/attendance.error';
 
 import { WordService } from '../word/word.service'
 
@@ -10,6 +11,7 @@ export class AttendService {
  
 // this method return room's Randowords or Quiz
 createWord(attendBodyDTO: AttendBodyDTO): string {
+
     const {randomCount, type} = attendBodyDTO;
 
     if(type === "word"){
@@ -17,17 +19,22 @@ createWord(attendBodyDTO: AttendBodyDTO): string {
         const roomsRandomWords: string[] = [];
     
         // eslint-disable-next-line no-plusplus
-        for(let i=0; i<randomCount; i++){
+        for(let i=1; i<=randomCount; i++){
             this.wordService.makeRandomWord().then(res =>{
-                roomsRandomWords[i] = res;
+                roomsRandomWords[i] = String(res);
             });
+
+            
+            
         }
+     
     }
 
     if(type === "quiz"){
         // do something
     }
     else{
+        throw new NotFoundException(AttendError.WRONG_ATTENDANCE_TYPE);
         // throw Exception
     }
 
