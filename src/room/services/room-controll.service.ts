@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { RoomError } from 'src/shared/errors/room.error';
 import { RoomInteractReturn } from 'src/types';
+import { RoomMemberDocument } from '../room.schema';
 import { RoomMemberService } from './room-member.service';
 import { RoomService } from './room.service';
 
@@ -25,6 +26,23 @@ export class RoomControllService {
       result += WORD_DATA[rand];
     }
     return result;
+  }
+
+  async changeGuestName(
+    roomId: number,
+    guestId: string,
+    name: string
+  ): Promise<RoomMemberDocument> {
+    const roomMember = await this.roomMemberService.getRoomMember(roomId);
+    const existsMember = roomMember.members.find((user) => user.id === guestId);
+    if (!existsMember) throw new NotFoundException(RoomError.GUEST_NOT_FOUND);
+
+    existsMember.name = name;
+
+    roomMember.markModified('members');
+    await roomMember.save();
+
+    return roomMember;
   }
 
   async joinRoom(roomId: number, options: JoinRoomOption): Promise<RoomInteractReturn> {

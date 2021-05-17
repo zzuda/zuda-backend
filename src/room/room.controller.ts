@@ -15,8 +15,10 @@ import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
 import { UserService } from 'src/user/user.service';
 import { CreateRoomBodyDTO } from './dto/create-room-body.dto';
 import { CreateRoomDTO } from './dto/create-room.dto';
+import { UpdateGuestNameDto } from './dto/update-guestname.dto';
 import { UpdateRoomDTO } from './dto/update-room.dto';
 import { Room } from './room.entity';
+import { RoomMemberDocument } from './room.schema';
 import { RoomControllService } from './services/room-controll.service';
 import { RoomMemberService } from './services/room-member.service';
 import { RoomService } from './services/room.service';
@@ -102,6 +104,20 @@ export class RoomController {
   @ApiInternalServerErrorResponse({ description: JSON.stringify(RoomError.ROOM_FAIL_INVITECODE) })
   async updateInviteCode(@Param('roomId') roomId: number): Promise<Room> {
     const room = await this.roomService.updateInviteCode(roomId);
+    return room;
+  }
+
+  @Put('/:roomId/guestname')
+  @ApiBody({ type: UpdateGuestNameDto })
+  @ApiParam({ name: 'roomId', type: Number })
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  async updateGuestName(
+    @Param('roomId') roomId: number,
+    @Body() updateGuestNameDto: UpdateGuestNameDto
+  ): Promise<RoomMemberDocument> {
+    const { guestId, name } = updateGuestNameDto;
+    const room = await this.roomControllService.changeGuestName(roomId, guestId, name);
     return room;
   }
 
