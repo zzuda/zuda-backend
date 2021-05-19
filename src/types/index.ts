@@ -30,3 +30,9 @@ export interface RoomInteractReturn {
   readonly guestId: string;
   readonly roomInfo: Room;
 }
+
+export interface CreatedWordReturn{
+  readonly message: string;
+  readonly count: number;
+  readonly words: string[];
+}
