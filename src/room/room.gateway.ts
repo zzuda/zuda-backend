@@ -27,11 +27,13 @@ export class RoomGateway {
     @MessageBody() data: JoinSocketRequest
   ): Promise<WsResponse<unknown>> {
     try {
-      const { inviteCode } = data;
+      const { inviteCode, name } = data;
 
       const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-      const result = await this.roomControllService.joinRoom(roomId);
+      const result = await this.roomControllService.joinRoom(roomId, {
+        name
+      });
       socket.join(`room-${roomId}`);
 
       return {
@@ -49,9 +51,9 @@ export class RoomGateway {
     @MessageBody() data: QuitSocketRequest
   ): Promise<WsResponse<unknown>> {
     try {
-      const { roomId, userId } = data;
+      const { roomId, guestId } = data;
 
-      await this.roomControllService.quitRoom(roomId, userId);
+      await this.roomControllService.quitRoom(roomId, guestId);
       socket.leave(`room-${roomId}`);
 
       return {

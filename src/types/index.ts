@@ -27,6 +27,6 @@ export interface JwtPayload {
 }
 
 export interface RoomInteractReturn {
-  readonly guestId: string;
+  readonly id: string;
   readonly roomInfo: Room;
 }
