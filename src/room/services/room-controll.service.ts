@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { RoomError } from 'src/shared/errors/room.error';
 import { RoomInteractReturn } from 'src/types';
