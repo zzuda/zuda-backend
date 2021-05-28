@@ -11,33 +11,39 @@ export class AttendService {
   constructor(private readonly wordService: WordService) {}
 
   // this method return room's Randowords or Quiz
-  createWord(attendBodyDTO: AttendBodyDTO): CreatedWordReturn {
+  async createWord(attendBodyDTO: AttendBodyDTO): Promise<CreatedWordReturn> {
     const { randomCount, type } = attendBodyDTO;
 
     
     const roomsRandomWords: string[] = [];
 
     if (type === 'word') {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 1; i <= randomCount; i++) {
-       
-        this.wordService.makeRandomWord().then((res) => {
-        roomsRandomWords[i] = String(res);
-          
-        roomsRandomWords.push(res)
-        });
-        
-      }
-      // eslint-disable-next-line no-console
-      console.log(roomsRandomWords);
 
+    
+    const promises = [];
+    // eslint-disable-next-line no-plusplus
+    for (let i = 1; i <= randomCount; i++) {
+      promises.push(this.wordService.makeRandomWord());
+    }
+
+    const results = await Promise.all(promises);
+
+    // eslint-disable-next-line no-console
+    // console.log(results);
+    
+    
+      // roomsRandomWords = promises.slice();
       
+      // eslint-disable-next-line no-console
+      // console.log(roomsRandomWords);
+
+    
       
 
       return {
         message: '초대 코드가 생성되었습니다.',
         count: randomCount,
-        words: roomsRandomWords
+        words: results
       };
     }
 

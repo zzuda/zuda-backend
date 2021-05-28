@@ -9,7 +9,7 @@ export class AttendController {
     constructor( private readonly attendService: AttendService ) {}
 
   @Post('create')
-  createAttendWord(@Body() attendBodyDTO: AttendBodyDTO): CreatedWordReturn{
+  createAttendWord(@Body() attendBodyDTO: AttendBodyDTO): Promise<CreatedWordReturn>{
     const result = this.attendService.createWord(attendBodyDTO)
 
     return result;
