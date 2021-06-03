@@ -50,13 +50,8 @@ describe('UserService', () => {
         password: undefined
       };
 
-      const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockImplementation(() => {
-        throw new NotFoundException(UserError.USER_NOT_FOUND);
-      });
-
       const user = await userService.create(createUserDto);
 
-      expect(findOneSpy).toHaveBeenCalledWith(createUserDto.email);
       expect(user.vendor).not.toBe(undefined);
       expect(user.password).toBe(undefined);
       expect(classToPlain(user)).toStrictEqual(result);
@@ -76,13 +71,8 @@ describe('UserService', () => {
         vendor: undefined
       };
 
-      const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockImplementation(() => {
-        throw new NotFoundException(UserError.USER_NOT_FOUND);
-      });
-
       const user = await userService.create(createUserDto);
 
-      expect(findOneSpy).toHaveBeenCalledWith(createUserDto.email);
       expect(user.password).not.toBe(undefined);
       expect(user.vendor).toBe(undefined);
       expect(classToPlain(user)).toStrictEqual(result);
