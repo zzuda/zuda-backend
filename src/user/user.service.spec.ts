@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { classToPlain } from 'class-transformer';
 import faker from 'faker';
+import { Repository } from 'typeorm';
 import { UserService } from './user.service';
 import { UserError } from '../shared/errors/user.error';
 import { User } from './user.entity';
@@ -17,6 +18,7 @@ const mockRepository = () => ({
 
 describe('UserService', () => {
   let userService: UserService;
+  let userRepository: Repository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +33,7 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   describe('Create User', () => {
@@ -109,6 +112,102 @@ describe('UserService', () => {
       }
 
       expect(findOneSpy).toHaveBeenCalledWith(createUserDto.email);
+    });
+  });
+
+  describe('Exists User', () => {
+    it('UUID로 유저가 존재하는지 확인한다.', async () => {
+      const uuidMock = faker.datatype.uuid();
+
+      const userMock = new User();
+      userMock.uuid = uuidMock;
+      userMock.email = faker.internet.email();
+      userMock.name = faker.name.findName();
+      userMock.vendor = 'naver';
+      userMock.password = undefined;
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByUUID').mockResolvedValue(userMock);
+      const exists = await userService.existsUserByUUID(uuidMock);
+
+      expect(findOneSpy).toHaveBeenCalledWith(uuidMock);
+      expect(exists).toBeTruthy();
+    });
+
+    it('이메일로 유저가 존재하는지 확인한다.', async () => {
+      const emailMock = faker.internet.email();
+
+      const userMock = new User();
+      userMock.uuid = faker.datatype.uuid();
+      userMock.email = emailMock;
+      userMock.name = faker.name.findName();
+      userMock.vendor = 'google';
+      userMock.password = undefined;
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(userMock);
+      const exists = await userService.existsUserByEmail(emailMock);
+
+      expect(findOneSpy).toHaveBeenCalledWith(emailMock);
+      expect(exists).toBeTruthy();
+    });
+  });
+
+  describe('Find User', () => {
+    it('저장된 모든 유저를 가져온다.', async () => {
+      const createUserMock = () => {
+        const userMock = new User();
+        userMock.uuid = faker.datatype.uuid();
+        userMock.email = faker.internet.email();
+        userMock.name = faker.name.findName();
+        userMock.vendor = 'google';
+        userMock.password = undefined;
+        return userMock;
+      };
+
+      const dataMock = [createUserMock(), createUserMock(), createUserMock()];
+      const findAllSpy = jest.spyOn(userRepository, 'find').mockResolvedValue(dataMock);
+
+      const result = await userService.findAll();
+
+      expect(findAllSpy).toBeTruthy();
+      expect(result).toHaveLength(3);
+    });
+
+    it('UUID로 유저 정보를 가져온다.', async () => {
+      const uuidMock = faker.datatype.uuid();
+
+      const userMock = new User();
+      userMock.uuid = uuidMock;
+      userMock.email = faker.internet.email();
+      userMock.name = faker.name.findName();
+      userMock.vendor = 'naver';
+      userMock.password = undefined;
+
+      const findOneSpy = jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock);
+      const user = await userService.findOneByUUID(uuidMock);
+
+      expect(findOneSpy).toHaveBeenCalledWith({
+        uuid: uuidMock
+      });
+      expect(user).toBe(userMock);
+    });
+
+    it('이메일로 유저 정보를 가져온다.', async () => {
+      const emailMock = faker.internet.email();
+
+      const userMock = new User();
+      userMock.uuid = faker.datatype.uuid();
+      userMock.email = emailMock;
+      userMock.name = faker.name.findName();
+      userMock.vendor = 'naver';
+      userMock.password = undefined;
+
+      const findOneSpy = jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock);
+      const user = await userService.findOneByEmail(emailMock);
+
+      expect(findOneSpy).toHaveBeenCalledWith({
+        email: emailMock
+      });
+      expect(user).toBe(userMock);
     });
   });
 });
