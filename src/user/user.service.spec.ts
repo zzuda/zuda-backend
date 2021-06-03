@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { classToPlain } from 'class-transformer';
@@ -83,6 +83,32 @@ describe('UserService', () => {
       expect(user.password).not.toBe(undefined);
       expect(user.vendor).toBe(undefined);
       expect(classToPlain(user)).toStrictEqual(result);
+    });
+
+    it('이미 존재하는 유저가 계정을 생성한다.', async () => {
+      const createUserDto = {
+        email: faker.internet.email(),
+        vendor: 'naver',
+        name: faker.name.findName()
+      };
+
+      const user = new User();
+      user.email = createUserDto.email;
+      user.vendor = createUserDto.vendor;
+      user.name = createUserDto.name;
+      user.uuid = expect.any(String);
+      user.password = undefined;
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(user);
+
+      try {
+        await userService.create(createUserDto);
+      } catch (e) {
+        expect(e).toBeInstanceOf(ConflictException);
+        expect(e.message).toBe(UserError.USER_ALREADY_EXISTS.message);
+      }
+
+      expect(findOneSpy).toHaveBeenCalledWith(createUserDto.email);
     });
   });
 });
