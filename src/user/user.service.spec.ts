@@ -13,7 +13,8 @@ const mockRepository = () => ({
   find: jest.fn(),
   findOne: jest.fn(),
   save: jest.fn(),
-  create: jest.fn()
+  create: jest.fn(),
+  softRemove: jest.fn()
 });
 
 describe('UserService', () => {
@@ -35,6 +36,25 @@ describe('UserService', () => {
     userService = module.get<UserService>(UserService);
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
+
+  type Either<T, TKey extends keyof T = keyof T> = TKey extends keyof T
+    ? { [P in TKey]-?: T[TKey] } & Partial<Record<Exclude<keyof T, TKey>, never>>
+    : never;
+  const createUserMock = (
+    userOptions: { uuid?: string; email?: string; name?: string } = {},
+    authOptions: Either<{
+      password?: string;
+      vendor?: string;
+    }>
+  ): User => {
+    const userMock = new User();
+    userMock.uuid = userOptions.uuid || faker.datatype.uuid();
+    userMock.email = userOptions.email || faker.internet.email();
+    userMock.name = userOptions.name || faker.name.findName();
+    userMock.vendor = authOptions.vendor;
+    userMock.password = authOptions.password;
+    return userMock;
+  };
 
   describe('Create User', () => {
     it('소셜로그인을 이용하여 새로운 유저를 생성한다.', async () => {
@@ -78,21 +98,24 @@ describe('UserService', () => {
       expect(classToPlain(user)).toStrictEqual(result);
     });
 
-    it('이미 존재하는 유저가 계정을 생성한다.', async () => {
+    it('유저가 이미 존재하면 오류를 반환한다.', async () => {
       const createUserDto = {
         email: faker.internet.email(),
         vendor: 'naver',
         name: faker.name.findName()
       };
 
-      const user = new User();
-      user.email = createUserDto.email;
-      user.vendor = createUserDto.vendor;
-      user.name = createUserDto.name;
-      user.uuid = expect.any(String);
-      user.password = undefined;
+      const userMock = createUserMock(
+        {
+          ...createUserDto,
+          uuid: expect.any(String)
+        },
+        {
+          vendor: createUserDto.vendor
+        }
+      );
 
-      const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(user);
+      const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(userMock);
 
       try {
         await userService.create(createUserDto);
@@ -109,12 +132,12 @@ describe('UserService', () => {
     it('UUID로 유저가 존재하는지 확인한다.', async () => {
       const uuidMock = faker.datatype.uuid();
 
-      const userMock = new User();
-      userMock.uuid = uuidMock;
-      userMock.email = faker.internet.email();
-      userMock.name = faker.name.findName();
-      userMock.vendor = 'naver';
-      userMock.password = undefined;
+      const userMock = createUserMock(
+        {
+          uuid: uuidMock
+        },
+        { vendor: 'naver' }
+      );
 
       const findOneSpy = jest.spyOn(userService, 'findOneByUUID').mockResolvedValue(userMock);
       const exists = await userService.existsUserByUUID(uuidMock);
@@ -126,12 +149,12 @@ describe('UserService', () => {
     it('이메일로 유저가 존재하는지 확인한다.', async () => {
       const emailMock = faker.internet.email();
 
-      const userMock = new User();
-      userMock.uuid = faker.datatype.uuid();
-      userMock.email = emailMock;
-      userMock.name = faker.name.findName();
-      userMock.vendor = 'google';
-      userMock.password = undefined;
+      const userMock = createUserMock(
+        {
+          email: emailMock
+        },
+        { vendor: 'naver' }
+      );
 
       const findOneSpy = jest.spyOn(userService, 'findOneByEmail').mockResolvedValue(userMock);
       const exists = await userService.existsUserByEmail(emailMock);
@@ -143,17 +166,11 @@ describe('UserService', () => {
 
   describe('Find User', () => {
     it('저장된 모든 유저를 가져온다.', async () => {
-      const createUserMock = () => {
-        const userMock = new User();
-        userMock.uuid = faker.datatype.uuid();
-        userMock.email = faker.internet.email();
-        userMock.name = faker.name.findName();
-        userMock.vendor = 'google';
-        userMock.password = undefined;
-        return userMock;
-      };
-
-      const dataMock = [createUserMock(), createUserMock(), createUserMock()];
+      const dataMock = [
+        createUserMock({}, { vendor: 'naver' }),
+        createUserMock({}, { vendor: 'naver' }),
+        createUserMock({}, { vendor: 'naver' })
+      ];
       const findAllSpy = jest.spyOn(userRepository, 'find').mockResolvedValue(dataMock);
 
       const result = await userService.findAll();
@@ -165,12 +182,12 @@ describe('UserService', () => {
     it('UUID로 유저 정보를 가져온다.', async () => {
       const uuidMock = faker.datatype.uuid();
 
-      const userMock = new User();
-      userMock.uuid = uuidMock;
-      userMock.email = faker.internet.email();
-      userMock.name = faker.name.findName();
-      userMock.vendor = 'naver';
-      userMock.password = undefined;
+      const userMock = createUserMock(
+        {
+          uuid: uuidMock
+        },
+        { vendor: 'naver' }
+      );
 
       const findOneSpy = jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock);
       const user = await userService.findOneByUUID(uuidMock);
@@ -184,12 +201,12 @@ describe('UserService', () => {
     it('이메일로 유저 정보를 가져온다.', async () => {
       const emailMock = faker.internet.email();
 
-      const userMock = new User();
-      userMock.uuid = faker.datatype.uuid();
-      userMock.email = emailMock;
-      userMock.name = faker.name.findName();
-      userMock.vendor = 'naver';
-      userMock.password = undefined;
+      const userMock = createUserMock(
+        {
+          email: emailMock
+        },
+        { vendor: 'naver' }
+      );
 
       const findOneSpy = jest.spyOn(userRepository, 'findOne').mockResolvedValue(userMock);
       const user = await userService.findOneByEmail(emailMock);
@@ -198,6 +215,97 @@ describe('UserService', () => {
         email: emailMock
       });
       expect(user).toBe(userMock);
+    });
+  });
+
+  describe('Update User', () => {
+    it('유저 정보를 수정한다.', async () => {
+      const uuidMock = faker.datatype.uuid();
+
+      const olderUserMock = createUserMock(
+        {
+          uuid: uuidMock
+        },
+        { password: 'password' }
+      );
+
+      const updateUserDto = {
+        password: 'newpassword',
+        name: faker.name.findName()
+      };
+
+      const result = {
+        ...olderUserMock,
+        ...updateUserDto
+      };
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByUUID').mockResolvedValue(olderUserMock);
+      const updateSpy = jest.spyOn(userRepository, 'save').mockResolvedValue(result);
+
+      const user = await userService.update(uuidMock, updateUserDto);
+
+      expect(findOneSpy).toHaveBeenCalledWith(uuidMock);
+      expect(updateSpy).toHaveBeenCalledWith(result);
+      expect(classToPlain(user)).toStrictEqual(result);
+    });
+
+    it('존재하지 않는 유저를 수정하면 오류를 반환한다.', async () => {
+      const uuidMock = faker.datatype.uuid();
+
+      const updateUserDto = {
+        password: 'newpassword',
+        name: faker.name.findName()
+      };
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByUUID').mockImplementation(() => {
+        throw new NotFoundException(UserError.USER_NOT_FOUND);
+      });
+
+      try {
+        await userService.update(uuidMock, updateUserDto);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toBe(UserError.USER_NOT_FOUND.message);
+      }
+
+      expect(findOneSpy).toHaveBeenCalledWith(uuidMock);
+    });
+  });
+
+  describe('Delete User', () => {
+    it('유저를 삭제한다.', async () => {
+      const uuidMock = faker.datatype.uuid();
+
+      const userMock = createUserMock(
+        {
+          uuid: uuidMock
+        },
+        { vendor: 'naver' }
+      );
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByUUID').mockResolvedValue(userMock);
+
+      const user = await userService.delete(uuidMock);
+
+      expect(findOneSpy).toHaveBeenCalledWith(uuidMock);
+      expect(user).toStrictEqual(userMock);
+    });
+
+    it('존재하지 않는 유저를 삭제하면 오류를 반환한다.', async () => {
+      const uuidMock = faker.datatype.uuid();
+
+      const findOneSpy = jest.spyOn(userService, 'findOneByUUID').mockImplementation(() => {
+        throw new NotFoundException(UserError.USER_NOT_FOUND);
+      });
+
+      try {
+        await userService.delete(uuidMock);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toBe(UserError.USER_NOT_FOUND.message);
+      }
+
+      expect(findOneSpy).toHaveBeenCalledWith(uuidMock);
     });
   });
 });
