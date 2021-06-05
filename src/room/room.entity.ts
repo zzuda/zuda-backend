@@ -33,5 +33,5 @@ export class Room {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'owner' })
-  owner!: User;
+  owner!: string;
 }
