@@ -6,12 +6,12 @@ import { Word } from './word.entity';
 
 @Injectable()
 export class WordService {
-  constructor(@InjectRepository(Word) private readonly userRepository: Repository<Word>) {}
+  constructor(@InjectRepository(Word) private readonly wordRepository: Repository<Word>) {}
 
   private WORD_COUNT = 23799;
 
   async get(id: number): Promise<Word> {
-    const result = await this.userRepository.findOne(id);
+    const result = await this.wordRepository.findOne(id);
 
     if (!result) throw new NotFoundException(WordError.WORD_NOT_FOUND);
 
