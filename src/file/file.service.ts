@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { existsSync, mkdirSync, rename, rmdir } from 'fs';
 
 import { Express } from 'express';
-import { FileBodyDTO } from './dto/upload-file-body.dto';
+import { FileBodyDTO } from './dto/file-body.dto';
 import { FileError } from '../shared/errors/file.error';
 
 @Injectable()
@@ -17,13 +17,13 @@ export class FileService {
 
   moveFile(files: Express.Multer.File[], fileBody: FileBodyDTO): string {
     const filePath = 'fileStorage';
-    const { roomID } = fileBody;
+    const { roomId } = fileBody;
     const backSlash = '\\';
     const temp = 'temp';
 
     const fileStorage = filePath + backSlash;
     const tempStorage: string = fileStorage + backSlash + temp;
-    const roomStorage: string = fileStorage + backSlash + roomID;
+    const roomStorage: string = fileStorage + backSlash + roomId;
 
     if (!existsSync(fileStorage)) mkdirSync(fileStorage);
     if (!existsSync(tempStorage)) mkdirSync(tempStorage);
@@ -57,10 +57,10 @@ export class FileService {
 
   deleteFile(fileBody: FileBodyDTO): string {
     const fileStorage = 'fileStorage';
-    const { fileName, roomID } = fileBody;
+    const { fileName, roomId } = fileBody;
     const backSlash = '\\';
 
-    rmdir(fileStorage + backSlash + roomID + backSlash + fileName, { recursive: true }, (err) => {
+    rmdir(fileStorage + backSlash + roomId + backSlash + fileName, { recursive: true }, (err) => {
       if (err) throw new InternalServerErrorException(FileError.FILE_DELETION_FAILED);
     });
     return '파일이 삭제되었습니다';
@@ -68,13 +68,13 @@ export class FileService {
 
   removeRoomStorage(fileBody: FileBodyDTO): string {
     const fileStorage = 'fileStorage';
-    const { roomID } = fileBody;
+    const { roomId } = fileBody;
     const backSlash = '\\';
 
-    if (!existsSync(fileStorage + backSlash + roomID))
+    if (!existsSync(fileStorage + backSlash + roomId))
       throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
 
-    rmdir(fileStorage + backSlash + roomID, { recursive: true }, (err) => {
+    rmdir(fileStorage + backSlash + roomId, { recursive: true }, (err) => {
       if (err) throw new InternalServerErrorException(FileError.FILE_STORAGE_DELETION_FAILED);
     });
     return 'file Storage Removed';

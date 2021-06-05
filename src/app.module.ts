@@ -11,7 +11,6 @@ import { UserModule } from './user/user.module';
 import { Word } from './word/word.entity';
 import { WordModule } from './word/word.module';
 import { FileModule } from './file/file.module';
-import { AttendModule } from './attend/attend.module';
 
 @Module({
   imports: [
@@ -50,7 +49,6 @@ import { AttendModule } from './attend/attend.module';
     RoomModule,
     WordModule,
     FileModule,
-    AttendModule
   ]
 })
 export class AppModule {}
