@@ -157,7 +157,7 @@ describe('UserService', () => {
 
       const result = await userService.findAll();
 
-      expect(findAllSpy).toBeTruthy();
+      expect(findAllSpy).toBeCalled();
       expect(result).toHaveLength(3);
     });
 
