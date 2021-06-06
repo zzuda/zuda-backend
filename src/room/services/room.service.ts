@@ -62,64 +62,6 @@ export class RoomService {
     return room;
   }
 
-  async update(roomId: number, updateRoomDto: UpdateRoomDTO): Promise<Room> {
-    const room = await this.getRoom(roomId);
-    const result = await this.roomRepository.save({
-      ...room,
-      ...updateRoomDto
-    });
-    return result;
-  }
-
-  async updateInviteCode(roomId: number): Promise<Room> {
-    const room = await this.getRoom(roomId);
-    const newInviteCode = await this.makeInviteCodeNotConflict();
-    const result = await this.roomRepository.save({
-      ...room,
-      inviteCode: newInviteCode
-    });
-    return result;
-  }
-
-  async delete(roomId: number): Promise<Room> {
-    const room = await this.getRoom(roomId);
-    await this.roomRepository.remove(room);
-    return room;
-  }
-
-  async findAll(): Promise<Room[]> {
-    const result = await this.roomRepository.find();
-    return result;
-  }
-
-  async getRoom(roomId: number): Promise<Room> {
-    const room = await this.roomRepository.findOne(roomId);
-
-    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
-
-    return room;
-  }
-
-  async getRoomByName(roomName: string): Promise<Room> {
-    const room = await this.roomRepository.findOne({
-      roomName
-    });
-
-    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
-
-    return room;
-  }
-
-  async getRoomByCode(inviteCode: string): Promise<Room> {
-    const room = await this.roomRepository.findOne({
-      inviteCode
-    });
-
-    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
-
-    return room;
-  }
-
   async existsRoom(roomId: number): Promise<boolean> {
     try {
       const room = await this.getRoom(roomId);
@@ -157,5 +99,63 @@ export class RoomService {
     }
 
     return false;
+  }
+
+  async findAll(): Promise<Room[]> {
+    const result = await this.roomRepository.find();
+    return result;
+  }
+
+  async getRoom(roomId: number): Promise<Room> {
+    const room = await this.roomRepository.findOne(roomId);
+
+    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
+
+    return room;
+  }
+
+  async getRoomByName(roomName: string): Promise<Room> {
+    const room = await this.roomRepository.findOne({
+      roomName
+    });
+
+    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
+
+    return room;
+  }
+
+  async getRoomByCode(inviteCode: string): Promise<Room> {
+    const room = await this.roomRepository.findOne({
+      inviteCode
+    });
+
+    if (!room) throw new NotFoundException(RoomError.ROOM_NOT_FOUND);
+
+    return room;
+  }
+
+  async update(roomId: number, updateRoomDto: UpdateRoomDTO): Promise<Room> {
+    const room = await this.getRoom(roomId);
+    const result = await this.roomRepository.save({
+      ...room,
+      ...updateRoomDto
+    });
+    return result;
+  }
+
+  async updateInviteCode(roomId: number): Promise<Room> {
+    const room = await this.getRoom(roomId);
+    const newInviteCode = await this.makeInviteCodeNotConflict();
+    const result = await this.roomRepository.save({
+      ...room,
+      inviteCode: newInviteCode
+    });
+    return result;
+  }
+
+  async delete(roomId: number): Promise<Room> {
+    const room = await this.getRoom(roomId);
+    await this.roomRepository.remove(room);
+    return room;
   }
 }
