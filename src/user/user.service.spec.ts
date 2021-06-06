@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { UserService } from './user.service';
 import { UserError } from '../shared/errors/user.error';
 import { User } from './user.entity';
+import { createUserMock } from '../utils/test.util';
 
 const mockRepository = () => ({
   find: jest.fn(),
@@ -36,25 +37,6 @@ describe('UserService', () => {
     userService = module.get<UserService>(UserService);
     userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
-
-  type Either<T, TKey extends keyof T = keyof T> = TKey extends keyof T
-    ? { [P in TKey]-?: T[TKey] } & Partial<Record<Exclude<keyof T, TKey>, never>>
-    : never;
-  const createUserMock = (
-    userOptions: { uuid?: string; email?: string; name?: string } = {},
-    authOptions: Either<{
-      password?: string;
-      vendor?: string;
-    }>
-  ): User => {
-    const userMock = new User();
-    userMock.uuid = userOptions.uuid || faker.datatype.uuid();
-    userMock.email = userOptions.email || faker.internet.email();
-    userMock.name = userOptions.name || faker.name.findName();
-    userMock.vendor = authOptions.vendor;
-    userMock.password = authOptions.password;
-    return userMock;
-  };
 
   describe('Create User', () => {
     it('소셜로그인을 이용하여 새로운 유저를 생성한다.', async () => {
