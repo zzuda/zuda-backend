@@ -1,6 +1,6 @@
 pipeline {
     agent any
- 
+
     tools {
         nodejs "nodejs12"
     }
@@ -18,10 +18,11 @@ pipeline {
             }
         }
 
-        stage('Lint') {
+        stage('Lint and Test') {
             steps {
                 sh 'yarn'
                 sh 'yarn lint'
+                sh 'yarn test'
             }
         }
 
