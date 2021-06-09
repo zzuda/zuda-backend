@@ -5,8 +5,8 @@ export class CreateRoomDTO {
   @IsString()
   roomName!: string;
 
-  @IsObject()
-  owner!: User;
+  @IsString()
+  owner!: string;
 
   @IsString()
   maxPeople!: number;

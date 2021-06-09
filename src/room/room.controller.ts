@@ -41,17 +41,14 @@ export class RoomController {
   @ApiNotFoundResponse()
   @ApiConflictResponse()
   async create(@Body() createRoomBodyDto: CreateRoomBodyDTO): Promise<Room> {
-    const uuid = createRoomBodyDto.owner;
-    const user = await this.userService.findOneByUUID(uuid);
-
     const createRoomDto = new CreateRoomDTO();
     createRoomDto.roomName = createRoomBodyDto.roomName;
-    createRoomDto.owner = user;
+    createRoomDto.owner = createRoomBodyDto.owner;
     createRoomDto.maxPeople = createRoomBodyDto.maxPeople;
 
     const room = await this.roomService.create(createRoomDto);
     await this.roomControllService.joinRoom(room.roomId, {
-      userId: uuid
+      userId: createRoomBodyDto.owner
     });
     return room;
   }
