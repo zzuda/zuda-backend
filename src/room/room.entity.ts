@@ -5,9 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Attend } from '../attend/attend.entity';
 
 @Entity('Room')
 export class Room {
@@ -34,4 +36,7 @@ export class Room {
   })
   @JoinColumn({ name: 'owner' })
   owner!: User;
+
+  @OneToOne(() => Attend, (attend) => attend.roomId)
+  attend!: Attend;
 }

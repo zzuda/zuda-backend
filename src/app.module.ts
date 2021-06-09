@@ -12,6 +12,7 @@ import { Word } from './word/word.entity';
 import { WordModule } from './word/word.module';
 import { FileModule } from './file/file.module';
 import { AttendModule } from './attend/attend.module';
+import { Attend } from './attend/attend.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { AttendModule } from './attend/attend.module';
         username: config.get<string>('DATABASE_USERNAME', 'root'),
         password: config.get<string>('DATABASE_PASSWORD', 'test'),
         database: config.get<string>('DATABASE_DB', 'zuda'),
-        entities: [User, Room, Word]
+        entities: [User, Room, Word, Attend]
       })
     }),
     MongooseModule.forRootAsync({
