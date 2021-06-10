@@ -40,9 +40,11 @@ pipeline {
             }
         }
 
-        stage('Cleanup') {
+        stage('Container cleanup') {
             steps {
                 sh 'docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop ${CONTAINER_NAME} && docker rm ${CONTAINER_NAME} || true'
+                sh 'docker ps -q --filter "name=zuda-db" | grep -q . && docker stop zuda-db && docker rm zuda-db || true'
+                sh 'docker ps -q --filter "name=zuda-mongo" | grep -q . && docker stop zuda-mongo && docker rm zuda-mongo || true'
             }
         }
 
