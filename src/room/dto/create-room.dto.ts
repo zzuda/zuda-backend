@@ -1,5 +1,4 @@
-import { IsObject, IsString } from 'class-validator';
-import { User } from 'src/user/user.entity';
+import { IsString } from 'class-validator';
 
 export class CreateRoomDTO {
   @IsString()
