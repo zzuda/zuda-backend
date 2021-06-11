@@ -12,7 +12,6 @@ import {
 } from '@nestjs/swagger';
 import { RoomError } from 'src/shared/errors/room.error';
 import { JwtAuthGuard } from 'src/shared/guards/jwt.guard';
-import { UserService } from 'src/user/user.service';
 import { CreateRoomBodyDTO } from './dto/create-room-body.dto';
 import { CreateRoomDTO } from './dto/create-room.dto';
 import { UpdateGuestNameDto } from './dto/update-guestname.dto';
@@ -22,6 +21,7 @@ import { RoomMemberDocument } from './room.schema';
 import { RoomControllService } from './services/room-controll.service';
 import { RoomMemberService } from './services/room-member.service';
 import { RoomService } from './services/room.service';
+import { MemberData } from '../types/member-data';
 
 @Controller('room')
 @ApiTags('room')
@@ -29,8 +29,7 @@ export class RoomController {
   constructor(
     private readonly roomService: RoomService,
     private readonly roomMemberService: RoomMemberService,
-    private readonly roomControllService: RoomControllService,
-    private readonly userService: UserService
+    private readonly roomControllService: RoomControllService
   ) {}
 
   @Post()
@@ -73,6 +72,18 @@ export class RoomController {
   async findOne(@Param('roomId') roomId: number): Promise<Room> {
     const result = await this.roomService.getRoom(roomId);
     return result;
+  }
+
+  @Get('/:roomId/member')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiParam({ name: 'roomId', type: Number })
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiUnauthorizedResponse()
+  async findOneMember(@Param('roomId') roomId: number): Promise<MemberData[]> {
+    const result = await this.roomMemberService.getRoomMember(roomId);
+    return result.members;
   }
 
   @Put('/:roomId')
