@@ -31,7 +31,7 @@ export class RoomGateway {
 
       const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-      const result = await this.roomControllService.joinRoom(roomId, {
+      const result = await this.roomControllService.joinRoom(roomId, socket.client.id, {
         name
       });
       socket.join(`room-${roomId}`);

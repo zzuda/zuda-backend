@@ -45,7 +45,11 @@ export class RoomControllService {
     return roomMember;
   }
 
-  async joinRoom(roomId: number, options: JoinRoomOption): Promise<RoomInteractReturn> {
+  async joinRoom(
+    roomId: number,
+    socketId: string,
+    options: JoinRoomOption
+  ): Promise<RoomInteractReturn> {
     const isFull = await this.roomMemberService.isRoomFull(roomId);
     if (isFull) throw new WsException(RoomError.ROOM_IS_FULL);
 
@@ -61,6 +65,7 @@ export class RoomControllService {
     roomMember.members.push({
       id: guestOrUserId,
       owner: userId !== undefined,
+      socketId,
       name
     });
     await roomMember.save();
