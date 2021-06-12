@@ -2,7 +2,7 @@ import { IsNumber, IsString } from 'class-validator';
 
 export class AttendBodyDTO {
   @IsNumber()
-  roomID!: number;
+  roomId!: number;
 
   @IsNumber()
   randomCount!: number;
