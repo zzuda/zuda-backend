@@ -9,6 +9,7 @@ import { UserService } from './user.service';
 import { UserError } from '../shared/errors/user.error';
 import { User } from './user.entity';
 import { createUserMock } from '../utils/test.util';
+import { Vendor } from '../types';
 
 const mockRepository = () => ({
   find: jest.fn(),
@@ -42,7 +43,7 @@ describe('UserService', () => {
     it('소셜로그인을 이용하여 새로운 유저를 생성한다.', async () => {
       const createUserDto = {
         email: faker.internet.email(),
-        vendor: 'naver',
+        vendor: Vendor.NAVER,
         name: faker.name.findName()
       };
 
@@ -83,7 +84,7 @@ describe('UserService', () => {
     it('유저가 이미 존재하면 오류를 반환한다.', async () => {
       const createUserDto = {
         email: faker.internet.email(),
-        vendor: 'naver',
+        vendor: Vendor.NAVER,
         name: faker.name.findName()
       };
 

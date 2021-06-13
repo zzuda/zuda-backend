@@ -1,5 +1,6 @@
 import { Room } from 'src/room/room.entity';
 import { User } from 'src/user/user.entity';
+import { col } from 'sequelize';
 
 interface ErrorDetail {
   code: string;
@@ -31,8 +32,17 @@ export interface RoomInteractReturn {
   readonly roomInfo: Room;
 }
 
-export interface CreatedWordReturn{
+export interface CreatedWordReturn {
   readonly message: string;
   readonly count: number;
   readonly words: string[];
 }
+
+export const Vendor = {
+  NAVER: 'naver',
+  GOOGLE: 'google',
+  FACEBOOK: 'facebook',
+  KAKAO: 'kakao'
+} as const;
+
+export type VendorUnion = typeof Vendor[keyof typeof Vendor];
