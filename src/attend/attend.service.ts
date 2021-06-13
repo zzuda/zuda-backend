@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException, ConflictException} from '@nestjs/common';
+import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {AttendError} from 'src/shared/errors/attendance.error';
 import {CreatedWordReturn} from 'src/types';
@@ -9,7 +9,6 @@ import {WordService} from '../word/word.service';
 import {RoomService} from '../room/services/room.service'
 
 import {AttendBodyDTO} from './dto/attend-body.dto';
-import { CreateAttendDTO } from './dto/create-attend.dto';
 
 @Injectable()
 export class AttendService {
@@ -21,33 +20,38 @@ export class AttendService {
     ) {}
 
     // this method return room's RandomWords or Quiz
-    async createWord(attendBodyDTO : AttendBodyDTO, ): Promise<CreatedWordReturn> {
+    async createWord(attendBodyDTO : AttendBodyDTO ): Promise<CreatedWordReturn> {
         const {roomId, randomCount, type} = attendBodyDTO;
 
         if (type === 'word') {
-
+            
+            
             if (await this.roomService.existsRoom(roomId) === false) {
-                throw new ConflictException(AttendError.ROOM_NOT_FOUND);
+                throw new NotFoundException(AttendError.ROOM_NOT_EXIST);
             }
 
-            const Words = [];
+           if (await this.existAttendCode(roomId) === true){
+               throw new ConflictException(AttendError.CODE_ALREADY_EXIST);
+           }
+
+            const words = [];
             // eslint-disable-next-line no-plusplus
             for (let i = 1; i <= randomCount; i++) {
-                Words.push(this.wordService.makeRandomWord());
+                words.push(this.wordService.makeRandomWord());
+
             }
-
-            const results = await Promise.all(Words);
-
+            const wordList = await Promise.all(words);
+            
             // put in to AttendWord Repository (DB Table)
-            // const attendTable = new Attend();
-            // attendTable.roomId = createAttendDTO.roomId;
-            // attendTable.words = createAttendDTO.words;
+            const attendTable = new Attend();
+            attendTable.words = wordList;
+            attendTable.roomId = roomId;
 
-            // await this.attendRepository.save(attendTable)
+            await this.attendRepository.save(attendTable)
             
 
 
-            return {message: '초대 코드가 생성되었습니다.', count: randomCount, words: results};
+            return {message: '초대 코드가 생성되었습니다.', count: randomCount, words: wordList};
 
         }
 
@@ -58,9 +62,20 @@ export class AttendService {
 
             return {message: '초대 코드가 생성되었습니다.', count: randomCount, words: word};
         }
+
         if (type !== 'quiz' && type !== 'word') {
             throw new NotFoundException(AttendError.WRONG_ATTENDANCE_TYPE);
         }
+
         return {message: "what should I do?", count: 0, words: []}
     }
+
+    // this function is for validate attend code is already Exist :)
+    async existAttendCode(roomId: number): Promise<boolean>{
+        const attendExist = await this.attendRepository.findOne(roomId);
+        if(attendExist) {return true}
+        
+        return false
+    }
+    
 }
