@@ -1,10 +1,7 @@
-import { Room } from 'src/room/room.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
@@ -17,10 +14,7 @@ export class Attend {
   @Column('json')
   words!: string[];
 
-  @OneToOne(() => Room, (room) => room.attend, {
-    onDelete: 'CASCADE'
-  })
-  @JoinColumn({ name: 'roomId' })
+  @Column('integer')
   roomId!: number;
 
   @CreateDateColumn()
