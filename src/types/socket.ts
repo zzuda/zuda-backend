@@ -12,3 +12,8 @@ export interface JoinOwnerSocketRequest {
   readonly roomId: number;
   readonly ownerId: string;
 }
+
+export interface KickSocketRequest {
+  readonly roomId: number;
+  readonly guestId: string;
+}

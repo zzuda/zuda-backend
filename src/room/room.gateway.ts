@@ -3,28 +3,35 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
   WsException,
   WsResponse
 } from '@nestjs/websockets';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Socket } from 'socket.io';
-import { JoinOwnerSocketRequest, JoinSocketRequest, QuitSocketRequest } from 'src/types/socket';
+import { Server, Socket } from 'socket.io';
+import {
+  JoinOwnerSocketRequest,
+  JoinSocketRequest,
+  KickSocketRequest,
+  QuitSocketRequest
+} from 'src/types/socket';
+import { Logger } from '@nestjs/common';
 import { RoomControllService } from './services/room-controll.service';
 import { RoomService } from './services/room.service';
 import { RoomError } from '../shared/errors/room.error';
 import { UserService } from '../user/user.service';
 import { UserError } from '../shared/errors/user.error';
 
-@WebSocketGateway({
-  namespace: 'room'
-})
+@WebSocketGateway()
 export class RoomGateway {
   constructor(
     private readonly roomService: RoomService,
     private readonly roomControllService: RoomControllService,
     private readonly userService: UserService
-  ) {
-  }
+  ) {}
+
+  @WebSocketServer()
+  server!: Server;
 
   @SubscribeMessage('join')
   async join(
@@ -36,7 +43,7 @@ export class RoomGateway {
 
       const { roomId } = await this.roomService.getRoomByCode(inviteCode);
 
-      const result = await this.roomControllService.joinRoom(roomId, socket.client.id, {
+      const result = await this.roomControllService.joinRoom(roomId, socket.id, {
         name
       });
       socket.join(`room-${roomId}`);
@@ -70,7 +77,7 @@ export class RoomGateway {
         throw new WsException(RoomError.ROOM_NOT_FOUND);
       }
 
-      const result = await this.roomControllService.joinRoom(roomId, socket.client.id, {
+      const result = await this.roomControllService.joinRoom(roomId, socket.id, {
         userId: ownerId
       });
       socket.join(`room-${roomId}`);
@@ -100,6 +107,37 @@ export class RoomGateway {
         data: true
       };
     } catch (e) {
+      throw new WsException(e.response || e.error);
+    }
+  }
+
+  @SubscribeMessage('kick')
+  async kick(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() data: KickSocketRequest
+  ): Promise<WsResponse<unknown>> {
+    try {
+      const { roomId, guestId } = data;
+
+      const { roomId: resultRoom, guest } = await this.roomControllService.kickGuest(
+        roomId,
+        guestId
+      );
+
+      const targetSocket = this.server.sockets.sockets[guest.socketId];
+
+      targetSocket.leave(`room-${roomId}`);
+      targetSocket.emit('kickComplete', {
+        roomId: resultRoom,
+        guestId: guest.id
+      });
+
+      return {
+        event: 'kick',
+        data: true
+      };
+    } catch (e) {
+      Logger.error(e);
       throw new WsException(e.response || e.error);
     }
   }
