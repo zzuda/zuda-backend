@@ -1,6 +1,6 @@
 import { ErrorInfo } from 'src/types';
 
-export const FileError: ErrorInfo = {
+const errors = {
   FILE_UPLOAD_FAILED: {
     code: 'file-500',
     message: '업로드에 실패하였습니다.'
@@ -30,4 +30,6 @@ export const FileError: ErrorInfo = {
     code: 'file-500',
     message: '파일 삭제를 실패하였습니다'
   }
-};
+} as const;
+
+export const FileError = errors as ErrorInfo<typeof errors>;

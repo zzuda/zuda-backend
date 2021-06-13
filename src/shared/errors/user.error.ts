@@ -1,6 +1,6 @@
 import { ErrorInfo } from 'src/types';
 
-export const UserError: ErrorInfo = {
+const errors = {
   USER_NOT_FOUND: {
     code: 'user-404',
     message: '존재하지 않는 계정입니다.'
@@ -9,4 +9,6 @@ export const UserError: ErrorInfo = {
     code: 'user-409',
     message: '이미 존재하는 계정입니다.'
   }
-};
+} as const;
+
+export const UserError = errors as ErrorInfo<typeof errors>;
