@@ -1,11 +1,14 @@
 import { Room } from 'src/room/room.entity';
 import { User } from 'src/user/user.entity';
 
-interface ErrorDetail {
-  code: string;
+interface ErrorDetail<K extends string> {
+  code: Uppercase<K>;
   message: string;
 }
-export type ErrorInfo<T extends Record<string, unknown>> = Record<keyof T, ErrorDetail>;
+export type ErrorInfo<T extends Record<string, unknown>> = Record<
+  keyof T,
+  ErrorDetail<keyof T & string>
+>;
 
 export interface TokenReturn {
   readonly TOKEN: string;

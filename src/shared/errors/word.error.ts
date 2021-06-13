@@ -2,7 +2,7 @@ import { ErrorInfo } from 'src/types';
 
 const errors = {
   WORD_NOT_FOUND: {
-    code: 'word-404',
+    code: 'WORD_NOT_FOUND',
     message: '단어를 찾을 수 없습니다.'
   }
 } as const;
