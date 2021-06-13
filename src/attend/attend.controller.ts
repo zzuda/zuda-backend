@@ -15,7 +15,7 @@ export class AttendController {
     return result;
   }
 
-  @Get()
+  @Get('list')
   findAll(): string {
     return 'This is test action lmao';
   }
