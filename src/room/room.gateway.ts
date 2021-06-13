@@ -21,6 +21,7 @@ import { RoomService } from './services/room.service';
 import { RoomError } from '../shared/errors/room.error';
 import { UserService } from '../user/user.service';
 import { UserError } from '../shared/errors/user.error';
+import { SocketEvent } from '../shared/socket/socket-event';
 
 @WebSocketGateway()
 export class RoomGateway {
@@ -33,7 +34,7 @@ export class RoomGateway {
   @WebSocketServer()
   server!: Server;
 
-  @SubscribeMessage('join')
+  @SubscribeMessage(SocketEvent.JOIN)
   async join(
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: JoinSocketRequest
@@ -49,7 +50,7 @@ export class RoomGateway {
       socket.join(`room-${roomId}`);
 
       return {
-        event: 'join',
+        event: SocketEvent.JOIN,
         data: result
       };
     } catch (e) {
@@ -57,7 +58,7 @@ export class RoomGateway {
     }
   }
 
-  @SubscribeMessage('joinOwner')
+  @SubscribeMessage(SocketEvent.JOIN_OWNER)
   async joinOwner(
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: JoinOwnerSocketRequest
@@ -83,7 +84,7 @@ export class RoomGateway {
       socket.join(`room-${roomId}`);
 
       return {
-        event: 'joinOwner',
+        event: SocketEvent.JOIN_OWNER,
         data: result
       };
     } catch (e) {
@@ -91,7 +92,7 @@ export class RoomGateway {
     }
   }
 
-  @SubscribeMessage('quit')
+  @SubscribeMessage(SocketEvent.QUIT)
   async quit(
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: QuitSocketRequest
@@ -103,7 +104,7 @@ export class RoomGateway {
       socket.leave(`room-${roomId}`);
 
       return {
-        event: 'quit',
+        event: SocketEvent.QUIT,
         data: true
       };
     } catch (e) {
@@ -111,7 +112,7 @@ export class RoomGateway {
     }
   }
 
-  @SubscribeMessage('kick')
+  @SubscribeMessage(SocketEvent.KICK)
   async kick(
     @ConnectedSocket() socket: Socket,
     @MessageBody() data: KickSocketRequest
@@ -127,17 +128,16 @@ export class RoomGateway {
       const targetSocket = this.server.sockets.sockets[guest.socketId];
 
       targetSocket.leave(`room-${roomId}`);
-      targetSocket.emit('kickComplete', {
+      targetSocket.emit(SocketEvent.KICK_COMPLETE, {
         roomId: resultRoom,
         guestId: guest.id
       });
 
       return {
-        event: 'kick',
+        event: SocketEvent.KICK,
         data: true
       };
     } catch (e) {
-      Logger.error(e);
       throw new WsException(e.response || e.error);
     }
   }

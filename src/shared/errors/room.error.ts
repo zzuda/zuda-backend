@@ -1,6 +1,6 @@
 import { ErrorInfo } from 'src/types';
 
-export const RoomError: ErrorInfo = {
+export const RoomError = {
   ROOM_NOT_FOUND: {
     code: 'room-404',
     message: '존재하지 않는 방입니다.'
