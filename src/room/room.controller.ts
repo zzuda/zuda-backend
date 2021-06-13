@@ -46,9 +46,6 @@ export class RoomController {
     createRoomDto.maxPeople = createRoomBodyDto.maxPeople;
 
     const room = await this.roomService.create(createRoomDto);
-    await this.roomControllService.joinRoom(room.roomId, {
-      userId: createRoomBodyDto.owner
-    });
     return room;
   }
 
