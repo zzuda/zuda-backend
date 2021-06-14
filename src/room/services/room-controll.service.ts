@@ -5,11 +5,18 @@ import { RoomInteractReturn } from 'src/types';
 import { RoomMemberDocument } from '../room.schema';
 import { RoomMemberService } from './room-member.service';
 import { RoomService } from './room.service';
+import { MemberData } from '../../types/member-data';
 
 interface JoinRoomOption {
   readonly name?: string;
   readonly userId?: string;
 }
+
+interface KickReturn {
+    readonly roomId: number;
+    readonly guest: MemberData;
+}
+
 const WORD_DATA = 'abcdefghijklmnopqrstuvwxyz1234567890';
 
 @Injectable()
@@ -45,7 +52,11 @@ export class RoomControllService {
     return roomMember;
   }
 
-  async joinRoom(roomId: number, options: JoinRoomOption): Promise<RoomInteractReturn> {
+  async joinRoom(
+    roomId: number,
+    socketId: string,
+    options: JoinRoomOption
+  ): Promise<RoomInteractReturn> {
     const isFull = await this.roomMemberService.isRoomFull(roomId);
     if (isFull) throw new WsException(RoomError.ROOM_IS_FULL);
 
@@ -61,6 +72,7 @@ export class RoomControllService {
     roomMember.members.push({
       id: guestOrUserId,
       owner: userId !== undefined,
+      socketId,
       name
     });
     await roomMember.save();
@@ -88,5 +100,23 @@ export class RoomControllService {
 
     roomMember.members.splice(guestIndex, 1);
     await roomMember.save();
+  }
+
+  async kickGuest(roomId: number, target: string): Promise<KickReturn> {
+    const existsRoom = await this.roomService.existsRoom(roomId);
+    if (!existsRoom) throw new WsException(RoomError.ROOM_NOT_FOUND);
+
+    const roomMember = await this.roomMemberService.getRoomMember(roomId);
+    const guest = roomMember.members.find((v) => v.id === target);
+
+    if (!guest) throw new WsException(RoomError.GUEST_NOT_FOUND);
+    if (guest.owner) throw new WsException(RoomError.OWNER_CAN_NOT_KICK);
+
+    await this.quitRoom(roomId, target);
+
+    return {
+      roomId,
+      guest
+    }
   }
 }

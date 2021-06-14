@@ -32,6 +32,10 @@ const errors = {
   OWNER_CAN_NOT_QUIT: {
     code: 'OWNER_CAN_NOT_QUIT',
     message: '방장은 방을 나갈 수 없습니다. 방 삭제를 이용해주세요.'
+  },
+  OWNER_CAN_NOT_KICK: {
+    code: 'room-400-1',
+    message: '방장은 추방할 수 없습니다.'
   }
 } as const;
 
