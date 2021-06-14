@@ -1,8 +1,8 @@
 import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {AttendError} from 'src/shared/errors/attendance.error';
-import {CreatedWordReturn} from 'src/types';
-import {Repository} from 'typeorm';
+import {AttendedListReturn, CreatedWordReturn} from 'src/types';
+import {Repository, getConnection} from 'typeorm';
 import {Attend} from './attend.entity'
 
 import {WordService} from '../word/word.service';
@@ -26,15 +26,18 @@ export class AttendService {
         if (type === 'word') {
             
             
-            if (await this.roomService.existsRoom(roomId) === false) {
+          
+          
+           if (await this.roomService.existsRoom(roomId) === false) {
                 throw new NotFoundException(AttendError.ROOM_NOT_EXIST);
+
             }
 
-           if (await this.existAttendCode(roomId) === true){
-               throw new ConflictException(AttendError.CODE_ALREADY_EXIST);
-           }
-
-            const words = [];
+        if (await this.isAttendExist(roomId) === true){
+            throw new ConflictException(AttendError.CODE_ALREADY_EXIST);
+        }
+            
+                const words = [];
             // eslint-disable-next-line no-plusplus
             for (let i = 1; i <= randomCount; i++) {
                 words.push(this.wordService.makeRandomWord());
@@ -52,6 +55,10 @@ export class AttendService {
 
 
             return {message: '초대 코드가 생성되었습니다.', count: randomCount, words: wordList};
+            
+
+
+            
 
         }
 
@@ -71,11 +78,48 @@ export class AttendService {
     }
 
     // this function is for validate attend code is already Exist :)
-    async existAttendCode(roomId: number): Promise<boolean>{
-        const attendExist = await this.attendRepository.findOne(roomId);
-        if(attendExist) {return true}
-        
-        return false
+    async getAttendCode(roomId: number): Promise<Attend>{
+        const existAttend = await this.attendRepository.findOne({roomId});
+
+        if(!existAttend) throw new NotFoundException();
+
+        return existAttend;
     }
-    
+
+    async isAttendExist(roomId: number): Promise<boolean>{
+        try{
+            const existAttend = await this.getAttendCode(roomId);
+            if(existAttend) return true;
+            
+        }catch (e) {
+            if(e instanceof NotFoundException){
+                return false;
+               
+            }
+        }
+        return false;
+    }
+
+
+
+    // get(return) attended user list
+    async getList(roomId: number): Promise<AttendedListReturn>{
+      
+
+        const wordStringList: unknown = await getConnection()
+        .createQueryBuilder()
+        .select("words")
+        .from(Attend, "words")
+        .where("attend.roomId = :roomId", {roomId})
+        .getOne();
+
+        // eslint-disable-next-line no-console
+        console.log(wordStringList);
+        
+
+        const testWordList: string[] = []
+
+        return{roomId, words: testWordList}
+    }
+
 }
