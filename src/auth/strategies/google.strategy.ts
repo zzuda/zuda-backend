@@ -6,9 +6,10 @@ import { CreateUserDTO } from 'src/user/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { Vendor } from '../../types';
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleStrategy extends PassportStrategy(Strategy, Vendor.GOOGLE) {
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UserService
@@ -29,7 +30,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     if (exists) {
       const user = await this.userService.findOneByEmail(email);
-      if (user.vendor !== 'google') {
+      if (user.vendor !== Vendor.GOOGLE) {
         throw new ConflictException(UserError.USER_ALREADY_EXISTS);
       }
       return user;
@@ -38,7 +39,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const dto = new CreateUserDTO();
     dto.email = email;
     dto.name = name;
-    dto.vendor = 'google';
+    dto.vendor = Vendor.GOOGLE;
 
     const createdUser = await this.userService.create(dto);
 

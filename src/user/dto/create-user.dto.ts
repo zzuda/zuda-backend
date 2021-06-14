@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { VendorUnion } from '../../types';
 
 export class CreateUserDTO {
   @IsEmail()
@@ -9,7 +10,7 @@ export class CreateUserDTO {
   @IsString()
   @IsOptional()
   @ApiProperty({ type: String, description: 'OAuth 소셜 종류', required: false })
-  vendor?: string;
+  vendor?: VendorUnion;
 
   @IsString()
   @IsOptional()

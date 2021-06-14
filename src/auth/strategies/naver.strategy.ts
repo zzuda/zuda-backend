@@ -6,9 +6,10 @@ import { CreateUserDTO } from 'src/user/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { Vendor } from '../../types';
 
 @Injectable()
-export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
+export class NaverStrategy extends PassportStrategy(Strategy, Vendor.NAVER) {
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UserService
@@ -28,7 +29,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
 
     if (exists) {
       const user = await this.userService.findOneByEmail(email);
-      if (user.vendor !== 'naver') {
+      if (user.vendor !== Vendor.NAVER) {
         throw new ConflictException(UserError.USER_ALREADY_EXISTS);
       }
       return user;
@@ -37,7 +38,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     const dto = new CreateUserDTO();
     dto.email = email;
     dto.name = nickname;
-    dto.vendor = 'naver';
+    dto.vendor = Vendor.NAVER;
 
     const createdUser = await this.userService.create(dto);
 

@@ -1,5 +1,6 @@
 import { Room } from 'src/room/room.entity';
 import { User } from 'src/user/user.entity';
+import { col } from 'sequelize';
 
 interface ErrorDetail<K extends string> {
   code: Uppercase<K>;
@@ -39,3 +40,12 @@ export interface CreatedWordReturn {
   readonly count: number;
   readonly words: string[];
 }
+
+export const Vendor = {
+  NAVER: 'naver',
+  GOOGLE: 'google',
+  FACEBOOK: 'facebook',
+  KAKAO: 'kakao'
+} as const;
+
+export type VendorUnion = typeof Vendor[keyof typeof Vendor];

@@ -6,9 +6,10 @@ import { CreateUserDTO } from 'src/user/dto/create-user.dto';
 import { UserError } from 'src/shared/errors/user.error';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { Vendor } from '../../types';
 
 @Injectable()
-export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
+export class KakaoStrategy extends PassportStrategy(Strategy, Vendor.KAKAO) {
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UserService
@@ -29,7 +30,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
 
     if (exists) {
       const user = await this.userService.findOneByEmail(email);
-      if (user.vendor !== 'kakao') {
+      if (user.vendor !== Vendor.KAKAO) {
         throw new ConflictException(UserError.USER_ALREADY_EXISTS);
       }
       return user;
@@ -38,7 +39,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     const dto = new CreateUserDTO();
     dto.email = email;
     dto.name = nickname;
-    dto.vendor = 'kakao';
+    dto.vendor = Vendor.KAKAO;
 
     const createdUser = await this.userService.create(dto);
 
