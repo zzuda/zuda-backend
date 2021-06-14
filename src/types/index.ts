@@ -1,11 +1,11 @@
 import { Room } from 'src/room/room.entity';
 import { User } from 'src/user/user.entity';
-import { col } from 'sequelize';
 
 interface ErrorDetail<K extends string> {
   code: Uppercase<K>;
   message: string;
 }
+
 export type ErrorInfo<T extends Record<string, unknown>> = Record<
   keyof T,
   ErrorDetail<keyof T & string>

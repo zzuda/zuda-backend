@@ -15,7 +15,6 @@ import {
   KickSocketRequest,
   QuitSocketRequest
 } from 'src/types/socket';
-import { Logger } from '@nestjs/common';
 import { RoomControllService } from './services/room-controll.service';
 import { RoomService } from './services/room.service';
 import { RoomError } from '../shared/errors/room.error';
