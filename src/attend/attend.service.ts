@@ -26,6 +26,7 @@ export class AttendService {
         if (type === 'word') {
             
 <<<<<<< HEAD
+<<<<<<< HEAD
            if (await this.roomService.existsRoom(roomId) === false) {
 =======
             
@@ -41,11 +42,21 @@ export class AttendService {
             
                 const words = [];
 =======
+=======
+            
+            if (await this.roomService.existsRoom(roomId) === false) {
+                throw new NotFoundException(AttendError.ROOM_NOT_EXIST);
+            }
+
+>>>>>>> parent of 9565286 (fix: 출석코드 여부 검사)
            if (await this.existAttendCode(roomId) === true){
                throw new ConflictException(AttendError.CODE_ALREADY_EXIST);
            }
 
             const words = [];
+<<<<<<< HEAD
+>>>>>>> parent of 9565286 (fix: 출석코드 여부 검사)
+=======
 >>>>>>> parent of 9565286 (fix: 출석코드 여부 검사)
             // eslint-disable-next-line no-plusplus
             for (let i = 1; i <= randomCount; i++) {
