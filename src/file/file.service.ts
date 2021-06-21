@@ -21,14 +21,14 @@ export class FileService {
         const tempStorage: string = fileStorage + backSlash + temp;
         const roomStorage: string = fileStorage + backSlash + roomId;
 
-        if (!existsSync(fileStorage)) 
+        if (!existsSync(fileStorage))
             mkdirSync(fileStorage);
-        if (!existsSync(tempStorage)) 
+        if (!existsSync(tempStorage))
             mkdirSync(tempStorage);
-        if (!existsSync(roomStorage)) 
+        if (!existsSync(roomStorage))
             mkdirSync(roomStorage);
         
-        if (files === null) 
+        if (files === null)
             throw new BadRequestException(FileError.NULL_UPLOAD);
         
         // eslint-disable-next-line no-restricted-syntax
@@ -41,14 +41,14 @@ export class FileService {
                     rmdir(fileStorage + backSlash + temp + backSlash + files[item].filename, {
                         recursive: true
                     }, (err) => {
-                        if (err) 
+                        if (err)
                             throw err;
                         }
                     );
                     throw new BadRequestException(FileError.FILE_CAPACITY_EXCEEDED);
                 }
                 rename(recievedFiles, moveToStorage, (err) => {
-                    if (err) 
+                    if (err)
                         throw new InternalServerErrorException(FileError.FILE_UPLOAD_FAILED);
                     }
                 );
@@ -65,7 +65,7 @@ export class FileService {
         rmdir(fileStorage + backSlash + roomId + backSlash + fileName, {
             recursive: true
         }, (err) => {
-            if (err) 
+            if (err)
                 throw new InternalServerErrorException(FileError.FILE_DELETION_FAILED);
             }
         );
@@ -77,13 +77,13 @@ export class FileService {
         const {roomId} = fileBody;
         const backSlash = '\\';
 
-        if (!existsSync(fileStorage + backSlash + roomId)) 
+        if (!existsSync(fileStorage + backSlash + roomId))
             throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
         
         rmdir(fileStorage + backSlash + roomId, {
             recursive: true
         }, (err) => {
-            if (err) 
+            if (err)
                 throw new InternalServerErrorException(FileError.FILE_STORAGE_DELETION_FAILED);
             }
         );
@@ -96,7 +96,7 @@ export class FileService {
         const backSlash = '\\';
         let files: string[];
 
-        if (!existsSync(fileStorage + backSlash + roomId)) 
+        if (!existsSync(fileStorage + backSlash + roomId))
             throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
         
         // eslint-disable-next-line prefer-const
