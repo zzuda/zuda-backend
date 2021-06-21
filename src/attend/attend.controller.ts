@@ -2,8 +2,7 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 
 import { AttendService } from './attend.service'
 import { AttendBodyDTO } from './dto/attend-body.dto'
-import { CreatedWordReturn, AttendedListReturn } from '../types/index'
-
+import { CreatedWordReturn } from '../types/index'
 
 @Controller('attend')
 export class AttendController {
@@ -17,10 +16,8 @@ export class AttendController {
   }
 
   @Get('list')
-  getAttendedList(@Body() roomId: number): Promise<AttendedListReturn>{
-    const result = this.attendService.getList(roomId)
-
-    return result;
+  findAll(): string {
+    return 'This is test action lmao';
   }
 
   

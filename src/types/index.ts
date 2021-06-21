@@ -36,8 +36,3 @@ export interface CreatedWordReturn{
   readonly count: number;
   readonly words: string[];
 }
-
-export interface AttendedListReturn{
-  readonly roomId: number;
-  readonly words: string[];
-}
