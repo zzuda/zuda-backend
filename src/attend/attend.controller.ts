@@ -22,4 +22,6 @@ export class AttendController {
 
     return result;
   }
+
+  
 }

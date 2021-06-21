@@ -25,17 +25,14 @@ export class AttendService {
 
         if (type === 'word') {
             
-            
-          
-          
            if (await this.roomService.existsRoom(roomId) === false) {
                 throw new NotFoundException(AttendError.ROOM_NOT_EXIST);
 
             }
 
-        if (await this.isAttendExist(roomId) === true){
-            throw new ConflictException(AttendError.CODE_ALREADY_EXIST);
-        }
+            if (await this.isAttendExist(roomId) === true){
+                throw new ConflictException(AttendError.CODE_ALREADY_EXIST);
+            }
             
                 const words = [];
             // eslint-disable-next-line no-plusplus
