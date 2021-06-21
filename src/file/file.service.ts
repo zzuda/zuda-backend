@@ -43,40 +43,52 @@ export class FileService {
             { recursive: true },
             (err) => {
               if (err) throw err;
+
+    deleteFile(fileBody : FileBodyDTO): string {
+        const fileStorage = 'fileStorage';
+        const {fileName, roomId} = fileBody;
+        const backSlash = '\\';
+
+        rmdir(fileStorage + backSlash + roomId + backSlash + fileName, {
+            recursive: true
+        }, (err) => {
+            if (err) 
+                throw new InternalServerErrorException(FileError.FILE_DELETION_FAILED);
             }
-          );
-          throw new BadRequestException(FileError.FILE_CAPACITY_EXCEEDED);
-        }
-        rename(recievedFiles, moveToStorage, (err) => {
-          if (err) throw new InternalServerErrorException(FileError.FILE_UPLOAD_FAILED);
-        });
-      }
+        );
+        return '파일이 삭제되었습니다';
     }
-    return '파일 업로드 완료';
-  }
 
-  deleteFile(fileBody: FileBodyDTO): string {
-    const fileStorage = 'fileStorage';
-    const { fileName, roomID } = fileBody;
-    const backSlash = '\\';
+    removeRoomStorage(fileBody : FileBodyDTO): string {
+        const fileStorage = 'fileStorage';
+        const {roomId} = fileBody;
+        const backSlash = '\\';
 
-    rmdir(fileStorage + backSlash + roomID + backSlash + fileName, { recursive: true }, (err) => {
-      if (err) throw new InternalServerErrorException(FileError.FILE_DELETION_FAILED);
-    });
-    return '파일이 삭제되었습니다';
-  }
+        if (!existsSync(fileStorage + backSlash + roomId)) 
+            throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
+        
+        rmdir(fileStorage + backSlash + roomId, {
+            recursive: true
+        }, (err) => {
+            if (err) 
+                throw new InternalServerErrorException(FileError.FILE_STORAGE_DELETION_FAILED);
+            }
+        );
+        return 'file Storage Removed';
+    }
 
-  removeRoomStorage(fileBody: FileBodyDTO): string {
-    const fileStorage = 'fileStorage';
-    const { roomID } = fileBody;
-    const backSlash = '\\';
+    getRoomsFile(fileBody : FileBodyDTO): FileListReturn {
+        const {roomId} = fileBody;
+        const fileStorage = 'fileStorage';
+        const backSlash = '\\';
+        let files: string[];
 
-    if (!existsSync(fileStorage + backSlash + roomID))
-      throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
+        if (!existsSync(fileStorage + backSlash + roomId)) 
+            throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
+        
+        // eslint-disable-next-line prefer-const
+        files = readdirSync(fileStorage + backSlash + roomId)
 
-    rmdir(fileStorage + backSlash + roomID, { recursive: true }, (err) => {
-      if (err) throw new InternalServerErrorException(FileError.FILE_STORAGE_DELETION_FAILED);
-    });
-    return 'file Storage Removed';
-  }
+        return {roomId, files}
+    }
 }

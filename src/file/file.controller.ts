@@ -3,7 +3,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 
 import { FileService } from './file.service';
-import { FileBodyDTO } from './dto/upload-file-body.dto';
+import { FileBodyDTO } from './dto/file-body.dto';
 
 @Controller('file')
 export class FileController {
@@ -34,6 +34,17 @@ export class FileController {
   @Post('deleteStorage')
   deleteDir(@Body() roomID: FileBodyDTO): string {
     const result = this.fileService.removeRoomStorage(roomID);
+
+  deleteDir(@Body() roomId: FileBodyDTO): string {
+    const result = this.fileService.removeRoomStorage(roomId);
+
+    return result;
+  }
+
+  @Get('list')
+  getFile(@Body() roomId: FileBodyDTO): FileListReturn{
+    const result = this.fileService.getRoomsFile(roomId);
+
 
     return result;
   }
