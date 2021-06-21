@@ -1,5 +1,12 @@
 /* eslint-disable max-classes-per-file */
-import {Controller, Post, UploadedFiles, UseInterceptors, Body} from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    UploadedFiles,
+    UseInterceptors,
+    Body,
+    Get
+} from '@nestjs/common';
 import {
     ApiTags,
     ApiOperation,
@@ -12,6 +19,7 @@ import {
 import {FilesInterceptor} from '@nestjs/platform-express';
 import {Express} from 'express';
 
+import {FileListReturn} from 'src/types';
 import {FileService} from './file.service';
 import {FileBodyDTO} from './dto/file-body.dto';
 
@@ -68,6 +76,21 @@ export class FileController {
         const result = this
             .fileService
             .removeRoomStorage(roomID);
+
+        return result;
+    }
+
+    @Get('list')
+    @ApiOperation(
+        {summary: '파일 리스트 조회', description: '- 해당 roomId에 방의 파일 리스트를 조회합니다 \n - 방의 숫자는 String 형태로 들어와야 합니다'}
+    )
+    @ApiBody({type: FileStorageDTO})
+    @ApiInternalServerErrorResponse()
+    @ApiNotFoundResponse()
+    getFile(@Body()roomId : FileBodyDTO): FileListReturn {
+        const result = this
+            .fileService
+            .getRoomsFile(roomId);
 
         return result;
     }

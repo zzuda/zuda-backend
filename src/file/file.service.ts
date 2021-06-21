@@ -5,11 +5,13 @@ import {
   InternalServerErrorException
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { existsSync, mkdirSync, rename, rmdir } from 'fs';
+import { existsSync, mkdirSync, rename, rmdir, readdirSync } from 'fs';
 
 import { Express } from 'express';
+import {FileListReturn} from 'src/types';
 import { FileBodyDTO } from './dto/file-body.dto';
 import { FileError } from '../shared/errors/file.error';
+
 
 @Injectable()
 export class FileService {
@@ -79,4 +81,19 @@ export class FileService {
     });
     return 'file Storage Removed';
   }
+
+  getRoomsFile(fileBody : FileBodyDTO): FileListReturn {
+    const {roomId} = fileBody;
+    const fileStorage = 'fileStorage';
+    const backSlash = '\\';
+    let files: string[];
+
+    if (!existsSync(fileStorage + backSlash + roomId)) 
+        throw new NotFoundException(FileError.FILE_STORAGE_NOT_FOUND);
+    
+    // eslint-disable-next-line prefer-const
+    files = readdirSync(fileStorage + backSlash + roomId)
+
+    return {roomId, files}
+}
 }
