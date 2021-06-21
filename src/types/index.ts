@@ -41,6 +41,11 @@ export interface CreatedWordReturn {
   readonly words: string[];
 }
 
+export interface FileListReturn{
+  readonly roomId: number;
+  readonly files: string[];
+}
+
 export const Vendor = {
   NAVER: 'naver',
   GOOGLE: 'google',
