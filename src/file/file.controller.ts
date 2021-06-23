@@ -14,7 +14,8 @@ import {
     PickType,
     ApiBadRequestResponse,
     ApiInternalServerErrorResponse,
-    ApiNotFoundResponse
+    ApiNotFoundResponse,
+    ApiOkResponse
 } from '@nestjs/swagger'
 import {FilesInterceptor} from '@nestjs/platform-express';
 import {Express} from 'express';
@@ -39,6 +40,7 @@ export class FileController {
                 '방 ID에 해당하는 roomStorage(저장 스토리지)가 존재하지 않으면 자동 생성됩니다.'
     })
     @ApiBody({type: FileUploadDTO})
+    @ApiOkResponse()
     @ApiBadRequestResponse()
     @ApiInternalServerErrorResponse()
     @UseInterceptors(FilesInterceptor('files', 20, {dest: './fileStorage/temp'}))
@@ -56,6 +58,7 @@ export class FileController {
     @Post('delete')
     @ApiOperation({summary: '파일 삭제', description: '- 해당 roomId에 해당하는 파일을 삭제합니다'})
     @ApiBody({type: FileBodyDTO})
+    @ApiOkResponse()
     @ApiInternalServerErrorResponse()
     deleteFile(@Body()FileBody : FileBodyDTO): string {
         const result = this
@@ -70,6 +73,7 @@ export class FileController {
         {summary: '파일 스토리지 삭제', description: '- 해당 roomId에 해당하는 저장공간을 삭제합니다'}
     )
     @ApiBody({type: FileStorageDTO})
+    @ApiOkResponse()
     @ApiInternalServerErrorResponse()
     @ApiNotFoundResponse()
     deleteDir(@Body()roomID : FileBodyDTO): string {
@@ -85,12 +89,13 @@ export class FileController {
         {summary: '파일 리스트 조회', description: '- 해당 roomId에 방의 파일 리스트를 조회합니다 \n - 방의 숫자는 String 형태로 들어와야 합니다'}
     )
     @ApiBody({type: FileStorageDTO})
+    @ApiOkResponse()
     @ApiInternalServerErrorResponse()
     @ApiNotFoundResponse()
     getFile(@Body()roomId : FileBodyDTO): FileListReturn {
         const result = this
             .fileService
-            .getRoomsFile(roomId);
+            .getRoomFiles(roomId);
 
         return result;
     }

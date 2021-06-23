@@ -90,7 +90,7 @@ export class FileService {
         return 'file Storage Removed';
     }
 
-    getRoomsFile(fileBody : FileBodyDTO): FileListReturn {
+    getRoomFiles(fileBody : FileBodyDTO): FileListReturn {
         const {roomId} = fileBody;
         const fileStorage = 'fileStorage';
         const backSlash = '\\';
