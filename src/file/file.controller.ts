@@ -47,7 +47,7 @@ export class FileController {
     uploadFiles(
         @UploadedFiles()files : Express.Multer.File[],
         @Body()fileBodyDTO : FileBodyDTO
-    ): string {
+    ): FileListReturn {
         const result = this
             .fileService
             .moveFile(files, fileBodyDTO);
