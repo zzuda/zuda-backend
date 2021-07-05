@@ -53,6 +53,12 @@ pipeline {
                 sh 'docker-compose up -d'
             }
         }
+        
+        stage('Discord') {
+            steps {
+                discordSend description: '배포 성공', title: '성공', webhookURL: '${DISCORD_WEBHOOK}'
+            }
+        }
     }
 
     post {
