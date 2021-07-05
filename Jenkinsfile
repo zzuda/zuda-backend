@@ -9,7 +9,6 @@ pipeline {
         CI = 'true'
         IMAGE = 'ghcr.io/zzuda/zuda-backend'
         CONTAINER_NAME = 'zuda-backend'
-        DISCORD_WEBHOOK = "${env.DISCORD_WEBHOOK}"
     }
 
     stages {
@@ -57,7 +56,7 @@ pipeline {
         
         stage('Webhook') {
             steps {
-                discordSend title: '🚀 배포 성공! ${currentBuild.number}', description: '`zuda-backend` 를 배포 성공하였습니다.', result: currentBuild.currentResult, link: '${currentBuild.absoluteUrl}', webhookURL: '${DISCORD_WEBHOOK}'
+                discordSend title: '🚀 배포 성공! ${currentBuild.number}', description: '`zuda-backend` 를 배포 성공하였습니다.', result: currentBuild.currentResult, link: currentBuild.absoluteUrl, webhookURL: env.DISCORD_WEBHOOK
             }
         }
     }
