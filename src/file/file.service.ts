@@ -11,11 +11,13 @@ import {FileError} from '../shared/errors/file.error';
 export class FileService {
     constructor(private readonly configService : ConfigService) {}
 
-    moveFile(files : Express.Multer.File[], fileBody : FileBodyDTO): string {
+    moveFile(files : Express.Multer.File[], fileBody : FileBodyDTO): FileListReturn {
         const filePath = 'fileStorage';
         const {roomId} = fileBody;
         const backSlash = '\\';
         const temp = 'temp';
+
+        const uploadedFiles: string[] = [];
 
         const fileStorage = filePath + backSlash;
         const tempStorage: string = fileStorage + backSlash + temp;
@@ -52,9 +54,10 @@ export class FileService {
                         throw new InternalServerErrorException(FileError.FILE_UPLOAD_FAILED);
                     }
                 );
+                uploadedFiles[item] = files[item].originalname
             }
         }
-        return '파일 업로드 완료';
+        return {roomId, files: uploadedFiles};
     }
 
     deleteFile(fileBody : FileBodyDTO): string {
