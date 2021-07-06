@@ -53,17 +53,19 @@ pipeline {
                 sh 'docker-compose up -d'
             }
         }
-        
-        stage('Webhook') {
-            steps {
-                discordSend title: '🚀 배포 성공!', description: '`zuda-backend` 를 배포 성공하였습니다.', result: currentBuild.currentResult, link: currentBuild.absoluteUrl, webhookURL: env.DISCORD_WEBHOOK
-            }
-        }
     }
 
     post {
         always {
             cleanWs()
+        }
+
+        success {
+            discordSend title: '🚀 배포 성공!', description: '`zuda-backend` 배포를 성공하였습니다.', result: 'SUCCESS', link: currentBuild.absoluteUrl, webhookURL: env.DISCORD_WEBHOOK
+        }
+
+        failure {
+            discordSend title: '💥 배포 실패!', description: '`zuda-backend` 배포를 실패하였습니다.', result: 'FAILURE', link: currentBuild.absoluteUrl, webhookURL: env.DISCORD_WEBHOOK
         }
     }
 }
