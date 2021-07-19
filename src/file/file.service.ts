@@ -2,8 +2,8 @@ import {Injectable, NotFoundException, BadRequestException, InternalServerErrorE
 import {ConfigService} from '@nestjs/config';
 import {existsSync, mkdirSync, rename, rmdir, readdirSync} from 'fs';
 
-import {Express} from 'express';
-import {FileListReturn} from 'src/types';
+import {Express, Response} from 'express';
+import {FileListReturn, FileDownloadReturn} from 'src/types';
 import {FileBodyDTO} from './dto/file-body.dto';
 import {FileError} from '../shared/errors/file.error';
 
@@ -107,4 +107,15 @@ export class FileService {
 
         return {roomId, files}
     }
+
+    downloadFile(res : Response, roomId : number, fileName : string): FileDownloadReturn {
+        res.download(`fileStorage/${roomId}/${fileName}`, fileName, (err) => {
+            if (err) {
+                throw new NotFoundException(FileError.FILE_NOT_EXIST)
+            }
+        })
+
+        return {roomId, fileName}
+    }
+
 }
