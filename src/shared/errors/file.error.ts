@@ -29,6 +29,11 @@ const errors = {
   FILE_DELETION_FAILED: {
     code: 'FILE_DELETION_FAILED',
     message: '파일 삭제를 실패하였습니다'
+  },
+
+  FILE_NOT_EXIST:{
+    code: 'FILE_NOT_EXIST',
+    message: '해당하는 이름의 파일은 존재하지 않습니다'
   }
 } as const;
 
