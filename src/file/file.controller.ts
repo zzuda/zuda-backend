@@ -1,5 +1,15 @@
 /* eslint-disable max-classes-per-file */
-import {Controller, Post, UploadedFiles, UseInterceptors, Body, Get, Res} from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    UploadedFiles,
+    UseInterceptors,
+    Body,
+    Get,
+    Res,
+    Query,
+    Param
+} from '@nestjs/common';
 import {
     ApiTags,
     ApiOperation,
@@ -10,13 +20,13 @@ import {
     ApiNotFoundResponse,
     ApiOkResponse
 } from '@nestjs/swagger'
-import {FilesInterceptor} from '@nestjs/platform-express';
-import {Express, query} from 'express';
 
-import {FileListReturn} from 'src/types';
+import {Express, Response} from 'express';
+import {FilesInterceptor} from '@nestjs/platform-express';
+
+import {FileListReturn, FileDownloadReturn} from 'src/types';
 import {FileService} from './file.service';
 import {FileBodyDTO} from './dto/file-body.dto';
-import { Query } from 'mongoose';
 
 export class FileUploadDTO extends PickType(FileBodyDTO, ['roomId']) {}
 
@@ -94,9 +104,17 @@ export class FileController {
         return result;
     }
 
-    @Get('download/:roomId/:fileName')
-    async downloadFile(@Res() res: Response, @Param('roomId') roomId: number, @Query('fileName') fileName: string, {
-        
+    @Get('download/:roomId')
+    async downloadFile(
+        @Res()res : Response,
+        @Param('roomId')roomId : number,
+        @Query('file')fileName : string
+    ): Promise<FileDownloadReturn> {
+        const result = this
+            .fileService
+            .downloadFile(res, roomId, fileName);
+
+        return result;
     }
 
 }
