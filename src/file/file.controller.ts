@@ -1,5 +1,15 @@
 /* eslint-disable max-classes-per-file */
-import {Controller, Post, UploadedFiles, UseInterceptors, Body} from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    UploadedFiles,
+    UseInterceptors,
+    Body,
+    Get,
+    Res,
+    Query,
+    Param
+} from '@nestjs/common';
 import {
     ApiTags,
     ApiOperation,
@@ -9,11 +19,12 @@ import {
     ApiInternalServerErrorResponse,
     ApiNotFoundResponse,
     ApiOkResponse
-} from '@nestjs/swagger'
-import {FilesInterceptor} from '@nestjs/platform-express';
-import {Express} from 'express';
+} from '@nestjs/swagger';
 
-import {FileListReturn} from 'src/types';
+import {Express, Response} from 'express';
+import {FilesInterceptor} from '@nestjs/platform-express';
+
+import {FileListReturn, FileDownloadReturn} from 'src/types';
 import {FileService} from './file.service';
 import {FileBodyDTO} from './dto/file-body.dto';
 
@@ -22,7 +33,7 @@ export class FileUploadDTO extends PickType(FileBodyDTO, ['roomId']) {}
 export class FileStorageDTO extends PickType(FileBodyDTO, ['roomId']) {}
 
 @Controller('file')
-@ApiTags("file")
+@ApiTags('file')
 export class FileController {
     constructor(private readonly fileService : FileService) {}
 
@@ -89,6 +100,26 @@ export class FileController {
         const result = this
             .fileService
             .getRoomFiles(roomId);
+
+        return result;
+    }
+
+    @Get('download/:roomId')
+    @ApiOperation({
+        summary: '해당 파일 다운로드',
+        description: '- 해당 roomId에 방의 파일을 다운로드 합니다 \n - 파라미터의 형태는 **localhost:8080/file/download/룸id' +
+                '?file=파일이름** 입니다'
+    })
+    @ApiOkResponse()
+    @ApiNotFoundResponse()
+    async downloadFile(
+        @Res()res : Response,
+        @Param('roomId')roomId : number,
+        @Query('file')fileName : string
+    ): Promise<FileDownloadReturn> {
+        const result = this
+            .fileService
+            .downloadFile(res, roomId, fileName);
 
         return result;
     }

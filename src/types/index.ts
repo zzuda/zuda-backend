@@ -46,6 +46,11 @@ export interface FileListReturn{
   readonly files: string[];
 }
 
+export interface FileDownloadReturn{
+  readonly roomId: number;
+  readonly fileName: string;
+}
+
 export const Vendor = {
   NAVER: 'naver',
   GOOGLE: 'google',
